@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aiwsport.core.mapper.StepChangeLogMapper" >
+  <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.StepChangeLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="stepNum" property="stepnum" jdbcType="INTEGER" />
+    <result column="coinNum" property="coinnum" jdbcType="INTEGER" />
+    <result column="createTime" property="createtime" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from step_change_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.aiwsport.core.entity.StepChangeLog" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into step_change_log (userId, stepNum, coinNum, 
+      createTime)
+    values (#{userid,jdbcType=INTEGER}, #{stepnum,jdbcType=INTEGER}, #{coinnum,jdbcType=INTEGER}, 
+      #{createtime,jdbcType=DATE})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.StepChangeLog" >
+    update step_change_log
+    set userId = #{userid,jdbcType=INTEGER},
+      stepNum = #{stepnum,jdbcType=INTEGER},
+      coinNum = #{coinnum,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, userId, stepNum, coinNum, createTime
+    from step_change_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, userId, stepNum, coinNum, createTime
+    from step_change_log
+  </select>
+</mapper>

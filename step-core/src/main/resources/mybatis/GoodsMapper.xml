@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aiwsport.core.mapper.GoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Goods" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="saleCoin" property="salecoin" jdbcType="INTEGER" />
+    <result column="imagesUrl" property="imagesurl" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from goods
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.aiwsport.core.entity.Goods" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into goods (name, desc, count, 
+      saleCoin, imagesUrl)
+    values (#{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}, 
+      #{salecoin,jdbcType=INTEGER}, #{imagesurl,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Goods" >
+    update goods
+    set name = #{name,jdbcType=VARCHAR},
+      desc = #{desc,jdbcType=VARCHAR},
+      count = #{count,jdbcType=INTEGER},
+      saleCoin = #{salecoin,jdbcType=INTEGER},
+      imagesUrl = #{imagesurl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, name, desc, count, saleCoin, imagesUrl
+    from goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, desc, count, saleCoin, imagesUrl
+    from goods
+  </select>
+</mapper>
