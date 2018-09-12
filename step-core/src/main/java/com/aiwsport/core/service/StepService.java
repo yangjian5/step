@@ -29,7 +29,6 @@ public class StepService {
     @Autowired
     private GoodChangeLogMapper goodChangeLogMapper;
 
-
     @Autowired
     private AddressMapper addressMapper;
 
@@ -73,6 +72,11 @@ public class StepService {
     }
 
     public int updateAddress(String addressId, String userId, String addressInfo, String telNum, String userName){
+        Address address = addressMapper.selectByUserId(Integer.parseInt(userId));
+        if (address != null) {
+            return 0;
+        }
+
         Address adderss = new Address();
         adderss.setId(Integer.parseInt(addressId));
         adderss.setUserid(Integer.parseInt(userId));
@@ -93,6 +97,12 @@ public class StepService {
             User user = userMapper.selectByPrimaryKey(Integer.parseInt(userId));
             if (user.getCoinnum() < goods.getSalecoin()) {
                 return new ResultMsg(false, 403,"火币不足,去邀请好友");
+            }
+
+            // 是否添加了地址
+            Address address = addressMapper.selectByUserId(Integer.parseInt(userId));
+            if (address == null) {
+                return new ResultMsg(false, 403,"请先添加地址 我的->地址管理");
             }
 
             // 扣减库存

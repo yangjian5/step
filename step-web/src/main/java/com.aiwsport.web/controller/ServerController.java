@@ -99,7 +99,7 @@ public class ServerController {
             id = stepService.createAddress(userId, addressInfo, telNum, userName);
         }
 
-        return new ResultMsg("保存收货地址成功", id);
+        return new ResultMsg("保存收货地址id成功", id == 0 ? "系统异常,请重试" : id);
     }
 
     @RequestMapping("/change_good.json")

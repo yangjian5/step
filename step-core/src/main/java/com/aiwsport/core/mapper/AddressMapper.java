@@ -10,6 +10,8 @@ public interface AddressMapper {
 
     Address selectByPrimaryKey(Integer id);
 
+    Address selectByUserId(Integer userId);
+
     List<Address> selectAll();
 
     int updateByPrimaryKey(Address record);
