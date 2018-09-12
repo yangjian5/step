@@ -1,14 +1,9 @@
 package com.aiwsport.core.service;
 
 import com.aiwsport.core.constant.ResultMsg;
-import com.aiwsport.core.entity.Address;
-import com.aiwsport.core.entity.Goods;
-import com.aiwsport.core.entity.StepChangeLog;
-import com.aiwsport.core.entity.User;
-import com.aiwsport.core.mapper.AddressMapper;
-import com.aiwsport.core.mapper.GoodsMapper;
-import com.aiwsport.core.mapper.StepChangeLogMapper;
-import com.aiwsport.core.mapper.UserMapper;
+import com.aiwsport.core.entity.*;
+import com.aiwsport.core.enums.GoodChangeType;
+import com.aiwsport.core.mapper.*;
 import com.aiwsport.core.utils.DataTypeUtils;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +25,9 @@ public class StepService {
 
     @Autowired
     private GoodsMapper goodsMapper;
+
+    @Autowired
+    private GoodChangeLogMapper goodChangeLogMapper;
 
 
     @Autowired
@@ -85,26 +83,37 @@ public class StepService {
     }
 
     public ResultMsg changeGood(String userId, String goodId){
-        // 增加记录
+        try {
+            Goods goods = goodsMapper.selectByPrimaryKey(Integer.parseInt(goodId));
+            if (goods.getCount() < 1) {
+                return new ResultMsg(false, 403,"库存有限,我们正在加紧备货");
+            }
 
+            // 校验币数
+            User user = userMapper.selectByPrimaryKey(Integer.parseInt(userId));
+            if (user.getCoinnum() < goods.getSalecoin()) {
+                return new ResultMsg(false, 403,"火币不足,去邀请好友");
+            }
 
+            // 扣减库存
+            goods.setCount(goods.getCount()-1);
+            goodsMapper.updateByPrimaryKey(goods);
 
-        Goods goods = goodsMapper.selectByPrimaryKey(Integer.parseInt(goodId));
-        if (goods.getCount() < 1) {
-            return new ResultMsg(false, 403,"火币不足,去邀请好友");
+            // 扣减币数
+            user.setCoinnum(user.getCoinnum()-goods.getSalecoin());
+            userMapper.updateByPrimaryKey(user);
+
+            // 增加记录
+            GoodChangeLog goodChangeLog = new GoodChangeLog();
+            goodChangeLog.setUserid(Integer.parseInt(userId));
+            goodChangeLog.setCreatetime(DataTypeUtils.formatCurDateTime());
+            goodChangeLog.setGoodid(Integer.parseInt(goodId));
+            goodChangeLog.setStatus(GoodChangeType.sended.name());
+            goodChangeLogMapper.insert(goodChangeLog);
+        } catch (Exception e) {
+
+            return new ResultMsg(false, 403,"兑换失败,重试一下或请联系客服");
         }
-
-        // 校验币数
-
-        User user = userMapper.selectByPrimaryKey(Integer.parseInt(userId));
-        if (user.getCoinnum() < goods.getSalecoin()) {
-            return new ResultMsg(false, 403,"火币不足,去邀请好友");
-        }
-
-        // 扣减币数
-        goods.setCount(goods.getCount()-1);
-        user.setCoinnum(user.getCoinnum()-goods.getSalecoin());
-
 
         return new ResultMsg("兑换成功成功", 0);
     }

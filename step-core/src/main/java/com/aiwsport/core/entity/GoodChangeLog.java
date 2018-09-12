@@ -9,7 +9,7 @@ public class GoodChangeLog {
 
     private Integer goodid;
 
-    private Date createtime;
+    private String createtime;
 
     private String status;
 
@@ -37,11 +37,11 @@ public class GoodChangeLog {
         this.goodid = goodid;
     }
 
-    public Date getCreatetime() {
+    public String getCreatetime() {
         return createtime;
     }
 
-    public void setCreatetime(Date createtime) {
+    public void setCreatetime(String createtime) {
         this.createtime = createtime;
     }
 

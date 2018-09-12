@@ -102,6 +102,11 @@ public class ServerController {
         return new ResultMsg("保存收货地址成功", id);
     }
 
+    @RequestMapping("/change_good.json")
+    public ResultMsg changeGood(String userId, String goodId) throws Exception{
+        return stepService.changeGood(userId, goodId);
+    }
+
     @RequestMapping("/test.json")
     public ResultMsg test() throws Exception{
         return new ResultMsg("服务启动成功", 9276);
