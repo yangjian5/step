@@ -211,7 +211,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.weibo.jerryweb.WebApplication</mainClass>
+                    <mainClass>com.aiwsport.web.WebApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
