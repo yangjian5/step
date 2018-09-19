@@ -1,10 +1,16 @@
 package com.aiwsport.core.utils;
 
 import com.aiwsport.core.constant.JerryConfigConstant;
+import com.aiwsport.core.entity.User;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.reflect.MethodUtils;
 import org.slf4j.LoggerFactory;
 import java.io.*;
+import java.security.InvalidAlgorithmParameterException;
 
 /**
  * 公用工具类
@@ -59,7 +65,42 @@ public class CommonUtil {
         }
     }
 
-//    public static void main(String args[]) {
+    public static int decrypt(String encryptedData, String iv, String sessionKey, String token,Integer days){
+        JSONObject flagObj = null;
+        try {
+            byte[] resultByte  = AES.decrypt(Base64.decodeBase64(encryptedData), Base64.decodeBase64(sessionKey),
+                    Base64.decodeBase64(iv));
+            if(null != resultByte && resultByte.length > 0){
+                JSONObject stepJson = JSONObject.parseObject(new String(resultByte, "UTF-8"));
+                JSONArray stepInfoList =  (JSONArray) stepJson.get("stepInfoList");
+
+                if(stepInfoList.size()>0){
+                    flagObj = (JSONObject)stepInfoList.get(0);
+                    for(int i=0;i<stepInfoList.size();i++){
+                        // 遍历 jsonarray 数组，把每一个对象转成 json 对象
+                        JSONObject job = stepInfoList.getJSONObject(i);
+                        if ((Integer)job.get("timestamp") > (Integer)flagObj.get("timestamp")) {
+                            flagObj = job;
+                        }
+                    }
+                }
+            }else{
+                logger.info("解密失败");
+            }
+        }catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (flagObj == null) {
+            return -1;
+        }
+        int toDayStep = (int)flagObj.get("step");
+        return toDayStep;
+    }
+
+
+    public static void main(String args[]) {
 //        try {
 //            OperationVersionLog operationVersionLog = new OperationVersionLog();
 //            Method method = operationVersionLog.getClass().getMethod("getVaildState");
@@ -69,8 +110,7 @@ public class CommonUtil {
 //        } catch (Exception e) {
 //            System.out.println(e);
 //        }
-//
-//    }
+    }
 
     /**
      * @param args
@@ -217,7 +257,5 @@ public class CommonUtil {
 //    public int getWatermarkLength(String waterMarkContent, Graphics2D g) {
 //        return g.getFontMetrics(g.getFont()).charsWidth(waterMarkContent.toCharArray(), 0, waterMarkContent.length());
 //    }
-
-
 
 }

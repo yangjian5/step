@@ -3,9 +3,10 @@
 <mapper namespace="com.aiwsport.core.mapper.GoodsMapper" >
   <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Goods" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="goodName" property="goodName" jdbcType="VARCHAR" />
+    <result column="descInfo" property="descInfo" jdbcType="VARCHAR" />
     <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="saleCoin" property="salecoin" jdbcType="INTEGER" />
     <result column="imagesUrl" property="imagesurl" jdbcType="VARCHAR" />
   </resultMap>
@@ -17,27 +18,33 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into goods (name, desc, count, 
+    insert into goods (goodName, descInfo, count, type,
       saleCoin, imagesUrl)
-    values (#{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}, 
+    values (#{goodName,jdbcType=VARCHAR}, #{descInfo,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR
       #{salecoin,jdbcType=INTEGER}, #{imagesurl,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Goods" >
     update goods
-    set name = #{name,jdbcType=VARCHAR},
-      desc = #{desc,jdbcType=VARCHAR},
+    set goodName = #{goodName,jdbcType=VARCHAR},
+      descInfo = #{descInfo,jdbcType=VARCHAR},
       count = #{count,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
       saleCoin = #{salecoin,jdbcType=INTEGER},
       imagesUrl = #{imagesurl,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, name, desc, count, saleCoin, imagesUrl
+    select id, goodName, descInfo, count, type, saleCoin, imagesUrl
     from goods
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, name, desc, count, saleCoin, imagesUrl
+    select id, goodName, descInfo, count, type, saleCoin, imagesUrl
     from goods
+  </select>
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, goodName, descInfo, count, type, saleCoin, imagesUrl
+    from goods
+    where type = #{type,jdbcType=VARCHAR}
   </select>
 </mapper>

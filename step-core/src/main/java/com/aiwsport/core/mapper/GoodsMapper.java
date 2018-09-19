@@ -13,4 +13,6 @@ public interface GoodsMapper {
     List<Goods> selectAll();
 
     int updateByPrimaryKey(Goods record);
+
+    List<Goods> selectByType(String type);
 }

@@ -38,4 +38,9 @@
     select id, userId, stepNum, coinNum, createTime
     from step_change_log
   </select>
+  <select id="selectAByUserIdToday" resultMap="BaseResultMap">
+    select id, userId, stepNum, coinNum, createTime
+    from step_change_log
+    where userId = #{arg0} AND (createTime BETWEEN #{arg1} AND #{arg2})
+  </select>
 </mapper>

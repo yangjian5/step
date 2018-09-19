@@ -3,11 +3,13 @@ package com.aiwsport.core.entity;
 public class Goods {
     private Integer id;
 
-    private String name;
+    private String goodName;
 
-    private String desc;
+    private String descInfo;
 
     private Integer count;
+
+    private String type;
 
     private Integer salecoin;
 
@@ -21,20 +23,20 @@ public class Goods {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getGoodName() {
+        return goodName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGoodName(String goodName) {
+        this.goodName = goodName;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescInfo() {
+        return descInfo;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescInfo(String descInfo) {
+        this.descInfo = descInfo;
     }
 
     public Integer getCount() {
@@ -59,5 +61,13 @@ public class Goods {
 
     public void setImagesurl(String imagesurl) {
         this.imagesurl = imagesurl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

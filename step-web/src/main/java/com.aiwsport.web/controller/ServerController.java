@@ -2,6 +2,8 @@ package com.aiwsport.web.controller;
 
 import com.aiwsport.core.constant.ResultMsg;
 import com.aiwsport.core.entity.Address;
+import com.aiwsport.core.entity.Goods;
+import com.aiwsport.core.entity.QueryGoodChangeShow;
 import com.aiwsport.core.entity.User;
 import com.aiwsport.core.service.StepService;
 import com.aiwsport.web.utlis.AES;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 服务操作
@@ -44,8 +48,8 @@ public class ServerController {
             System.out.println(userInfo);
             jsonObject = JSONObject.parseObject(userInfo);
             User user = stepService.login(jsonObject);
-            jsonObject.put("coinNum", user.getCoinnum()+"");
-            jsonObject.put("userId", user.getId()+"");
+            jsonObject.put("coinnum", user.getCoinnum()+"");
+            jsonObject.put("userid", user.getId()+"");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,41 +57,70 @@ public class ServerController {
     }
 
     @RequestMapping("/decrypt.json")
-    public String decrypt(String encryptedData, String iv, String sessionKey, String token,Integer days) throws Exception{
-        JSONObject flagObj = null;
-        try {
-            byte[] resultByte  = AES.decrypt(Base64.decodeBase64(encryptedData), Base64.decodeBase64(sessionKey),
-                    Base64.decodeBase64(iv));
-            if(null != resultByte && resultByte.length > 0){
-                JSONObject stepJson = JSONObject.parseObject(new String(resultByte, "UTF-8"));
-                JSONArray stepInfoList =  (JSONArray) stepJson.get("stepInfoList");
-
-                if(stepInfoList.size()>0){
-                    flagObj = (JSONObject)stepInfoList.get(0);
-                    for(int i=0;i<stepInfoList.size();i++){
-                        // 遍历 jsonarray 数组，把每一个对象转成 json 对象
-                        JSONObject job = stepInfoList.getJSONObject(i);
-                        if ((Integer)job.get("timestamp") > (Integer)flagObj.get("timestamp")) {
-                            flagObj = job;
-                        }
-                    }
-                }
-            }else{
-                logger.info("解密失败");
-            }
-        }catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+    public ResultMsg decrypt(String encryptedData, String iv, String sessionKey, String userId, String token,Integer days) throws Exception{
+        int toDayStep = stepService.decrypt(encryptedData, iv, sessionKey, Integer.parseInt(userId), token, days);
+        if (toDayStep == -1) {
+            return new ResultMsg(false, 403,"系统有点忙, 请刷新下");
         }
-        Object toDayStep = flagObj.get("step");
-        return toDayStep == null ? "fail" : toDayStep.toString();
+
+        return new ResultMsg("decryptOK", toDayStep);
     }
 
     @RequestMapping("/change_coin.json")
     public String changeCoin(String step, String openId, String userId) throws Exception{
         User user = stepService.changeCoin(step, openId, userId);
         return JSONObject.toJSONString(user);
+    }
+
+    @RequestMapping("/get_address.json")
+    public ResultMsg getAddress(String userId) throws Exception{
+        Address address = stepService.getAddress(userId);
+        if (address == null) {
+            address = new Address();
+        }
+
+        return new ResultMsg("getAddressOK", address);
+    }
+
+    @RequestMapping("/get_user.json")
+    public ResultMsg getUser(String userId) throws Exception{
+        User user = stepService.getUser(userId);
+        if (user == null) {
+            user = new User();
+        }
+
+        return new ResultMsg("getUserOK", user);
+    }
+
+    @RequestMapping("/get_good.json")
+    public ResultMsg getGood(String goodId) throws Exception{
+        Goods goods = stepService.getGood(goodId);
+        if (goods == null) {
+            goods = new Goods();
+        }
+
+        return new ResultMsg("getGoodOK", goods);
+    }
+
+    @RequestMapping("/get_goods_by_type.json")
+    public ResultMsg getGoodsByType(String type) throws Exception{
+        List<Goods> goods = stepService.getGoodsByType(type);
+        if (goods == null) {
+            goods = new ArrayList<Goods>();
+        }
+        return new ResultMsg("getGoodOK", goods);
+    }
+
+    @RequestMapping("/get_good_change_log.json")
+    public ResultMsg getGoodChangeLog(String goodId) throws Exception{
+        List<QueryGoodChangeShow> queryGoodChangeShows = stepService.getGoodChangeLog(goodId);
+        return new ResultMsg("getGoodChangLogOK", queryGoodChangeShows);
+    }
+
+    @RequestMapping("/get_user_change_log.json")
+    public ResultMsg getUserChangeLog(String userId) throws Exception{
+        List<QueryGoodChangeShow> queryGoodChangeShows = stepService.getUserChangeLog(userId);
+        return new ResultMsg("getUserChangLogOK", queryGoodChangeShows);
     }
 
     @RequestMapping("/save_address.json")

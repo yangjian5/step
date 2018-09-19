@@ -38,4 +38,12 @@
     select id, userId, goodId, createTime, status
     from good_change_log
   </select>
+  <select id="selectByGoodId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select id, userId, goodId, createTime, status
+    from good_change_log where goodId = #{goodId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select id, userId, goodId, createTime, status
+    from good_change_log where goodId = #{userId,jdbcType=INTEGER}
+  </select>
 </mapper>

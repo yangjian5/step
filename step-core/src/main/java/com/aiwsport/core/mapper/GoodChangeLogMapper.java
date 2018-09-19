@@ -10,6 +10,10 @@ public interface GoodChangeLogMapper {
 
     GoodChangeLog selectByPrimaryKey(Integer id);
 
+    List<GoodChangeLog> selectByGoodId(Integer goodId);
+
+    List<GoodChangeLog> selectByUserId(Integer UserId);
+
     List<GoodChangeLog> selectAll();
 
     int updateByPrimaryKey(GoodChangeLog record);

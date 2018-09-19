@@ -13,4 +13,6 @@ public interface StepChangeLogMapper {
     List<StepChangeLog> selectAll();
 
     int updateByPrimaryKey(StepChangeLog record);
+
+    List<StepChangeLog> selectAByUserIdToday(Integer userId, String sTime, String eTime);
 }

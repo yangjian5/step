@@ -198,7 +198,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.yml</include>
+                    <include>**/*.jpg</include>
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                 </includes>
