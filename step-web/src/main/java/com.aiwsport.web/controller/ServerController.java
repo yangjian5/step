@@ -1,5 +1,7 @@
 package com.aiwsport.web.controller;
 
+import com.aiwsport.core.StepServerException;
+import com.aiwsport.core.StepServerExceptionFactor;
 import com.aiwsport.core.constant.ResultMsg;
 import com.aiwsport.core.entity.Address;
 import com.aiwsport.core.entity.Goods;
@@ -8,19 +10,24 @@ import com.aiwsport.core.entity.User;
 import com.aiwsport.core.service.StepService;
 import com.aiwsport.web.utlis.AES;
 import com.aiwsport.web.utlis.HttpRequestor;
+import com.aiwsport.web.verify.ParamObjVerify;
+import com.aiwsport.web.verify.ParamVerify;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 服务操作
@@ -35,8 +42,8 @@ public class ServerController {
 
     private static Logger logger = LogManager.getLogger();
 
-    @RequestMapping(value = "/onlogin.json")
-    public String onlogin(String code) {
+    @RequestMapping(value = "/step/onlogin.json")
+    public String onlogin(@ParamVerify(isNotBlank = true)String code) {
         String appid = "wx169ddfe67114165d";
         String secret = "a9cb222c3a61f6ec58376d6c2853b015";
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appid + "&secret=" + secret + "&js_code=";
@@ -56,8 +63,9 @@ public class ServerController {
         return JSONObject.toJSONString(jsonObject);
     }
 
-    @RequestMapping("/decrypt.json")
-    public ResultMsg decrypt(String encryptedData, String iv, String sessionKey, String userId, String token,Integer days) throws Exception{
+    @RequestMapping("/step/decrypt.json")
+    public ResultMsg decrypt(String encryptedData, String iv, @ParamVerify(isNotBlank = true) String sessionKey,
+                             @ParamVerify(isNotBlank = true, isNumber = true) String userId, String token,Integer days) throws Exception{
         int toDayStep = stepService.decrypt(encryptedData, iv, sessionKey, Integer.parseInt(userId), token, days);
         if (toDayStep == -1) {
             return new ResultMsg(false, 403,"系统有点忙, 请刷新下");
@@ -66,14 +74,16 @@ public class ServerController {
         return new ResultMsg("decryptOK", toDayStep);
     }
 
-    @RequestMapping("/change_coin.json")
-    public String changeCoin(String step, String openId, String userId) throws Exception{
+    @RequestMapping("/step/change_coin.json")
+    public String changeCoin(@ParamVerify(isNotBlank = true, isNumber = true) String step,
+                             @ParamVerify(isNotBlank = true) String openId,
+                             @ParamVerify(isNotBlank = true, isNumber = true) String userId) throws Exception{
         User user = stepService.changeCoin(step, openId, userId);
         return JSONObject.toJSONString(user);
     }
 
-    @RequestMapping("/get_address.json")
-    public ResultMsg getAddress(String userId) throws Exception{
+    @RequestMapping("/step/get_address.json")
+    public ResultMsg getAddress(@ParamVerify(isNotBlank = true, isNumber = true) String userId) throws Exception{
         Address address = stepService.getAddress(userId);
         if (address == null) {
             address = new Address();
@@ -82,8 +92,8 @@ public class ServerController {
         return new ResultMsg("getAddressOK", address);
     }
 
-    @RequestMapping("/get_user.json")
-    public ResultMsg getUser(String userId) throws Exception{
+    @RequestMapping("/step/get_user.json")
+    public ResultMsg getUser(@ParamVerify(isNotBlank = true, isNumber = true) String userId) throws Exception{
         User user = stepService.getUser(userId);
         if (user == null) {
             user = new User();
@@ -92,8 +102,8 @@ public class ServerController {
         return new ResultMsg("getUserOK", user);
     }
 
-    @RequestMapping("/get_good.json")
-    public ResultMsg getGood(String goodId) throws Exception{
+    @RequestMapping("/step/get_good.json")
+    public ResultMsg getGood(@ParamVerify(isNotBlank = true, isNumber = true) String goodId) throws Exception{
         Goods goods = stepService.getGood(goodId);
         if (goods == null) {
             goods = new Goods();
@@ -102,8 +112,8 @@ public class ServerController {
         return new ResultMsg("getGoodOK", goods);
     }
 
-    @RequestMapping("/get_goods_by_type.json")
-    public ResultMsg getGoodsByType(String type) throws Exception{
+    @RequestMapping("/step/get_goods_by_type.json")
+    public ResultMsg getGoodsByType(@ParamVerify(isNotBlank = true, isNumber = true) String type) throws Exception{
         List<Goods> goods = stepService.getGoodsByType(type);
         if (goods == null) {
             goods = new ArrayList<Goods>();
@@ -111,32 +121,37 @@ public class ServerController {
         return new ResultMsg("getGoodOK", goods);
     }
 
-    @RequestMapping("/get_good_change_log.json")
-    public ResultMsg getGoodChangeLog(String goodId) throws Exception{
+    @RequestMapping("/step/get_good_change_log.json")
+    public ResultMsg getGoodChangeLog(@ParamVerify(isNotBlank = true, isNumber = true) String goodId) throws Exception{
         List<QueryGoodChangeShow> queryGoodChangeShows = stepService.getGoodChangeLog(goodId);
         return new ResultMsg("getGoodChangLogOK", queryGoodChangeShows);
     }
 
-    @RequestMapping("/get_user_change_log.json")
-    public ResultMsg getUserChangeLog(String userId) throws Exception{
+    @RequestMapping("/step/get_user_change_log.json")
+    public ResultMsg getUserChangeLog(@ParamVerify(isNotBlank = true, isNumber = true) String userId) throws Exception{
         List<QueryGoodChangeShow> queryGoodChangeShows = stepService.getUserChangeLog(userId);
         return new ResultMsg("getUserChangLogOK", queryGoodChangeShows);
     }
 
-    @RequestMapping("/save_address.json")
-    public ResultMsg saveAddress(String addressId, String userId, String addressInfo, String telNum, String userName) throws Exception{
+    @RequestMapping("/step/save_address.json")
+    public ResultMsg saveAddress(String addressId, @ParamVerify(isNotBlank = true, isNumber = true) String userId, String addressInfo, String telNum, String userName) throws Exception{
         int id = 0;
-        if (StringUtils.isNotBlank(addressId)) {
-            id = stepService.updateAddress(addressId, userId, addressInfo, telNum, userName);
-        } else {
-            id = stepService.createAddress(userId, addressInfo, telNum, userName);
+        try{
+            if (StringUtils.isNotBlank(addressId)) {
+                id = stepService.updateAddress(addressId, userId, addressInfo, telNum, userName);
+            } else {
+                id = stepService.createAddress(userId, addressInfo, telNum, userName);
+            }
+        } catch (Exception e) {
+            logger.error("save_address is error", e);
         }
 
         return new ResultMsg("保存收货地址id成功", id == 0 ? "系统异常,请重试" : id);
     }
 
-    @RequestMapping("/change_good.json")
-    public ResultMsg changeGood(String userId, String goodId) throws Exception{
+    @RequestMapping("/step/change_good.json")
+    public ResultMsg changeGood(@ParamVerify(isNotBlank = true, isNumber = true) String userId,
+                                @ParamVerify(isNotBlank = true, isNumber = true) String goodId) throws Exception{
         return stepService.changeGood(userId, goodId);
     }
 

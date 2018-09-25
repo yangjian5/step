@@ -1,7 +1,7 @@
 package com.aiwsport.web.verify.verifyaop;
 
-import com.aiwsport.core.ConfigServerException;
-import com.aiwsport.core.ConfigServerExceptionFactor;
+import com.aiwsport.core.StepServerException;
+import com.aiwsport.core.StepServerExceptionFactor;
 import com.aiwsport.web.utlis.RegexUtil;
 import com.aiwsport.web.verify.ParamObjVerify;
 import com.aiwsport.web.verify.ParamObjVerifys;
@@ -133,9 +133,9 @@ public class ConfigAop {
                         field.setAccessible(true);
                         verify(paramObjVerify.paramRule(), field.get(paramValue), field.getName());
                     } catch (NoSuchFieldException e) {
-                        throw new ConfigServerException(ConfigServerExceptionFactor.CONFIG_ERROR);
+                        throw new StepServerException(StepServerExceptionFactor.CONFIG_ERROR);
                     } catch (IllegalAccessException e) {
-                        throw new ConfigServerException(ConfigServerExceptionFactor.INTERNAL_ERROR);
+                        throw new StepServerException(StepServerExceptionFactor.INTERNAL_ERROR);
                     }
                 }
             }
@@ -144,63 +144,63 @@ public class ConfigAop {
 
     private void verify(ParamVerify paramVerify, Object value, String fieldName) {
         if (paramVerify == null) {
-            throw new ConfigServerException(ConfigServerExceptionFactor.CONFIG_PARAM_TYPE_MISMATCH);
+            throw new StepServerException(StepServerExceptionFactor.CONFIG_PARAM_TYPE_MISMATCH);
         }
         String paramValue = value == null ? null : String.valueOf(value);
 
         if (paramVerify.isNotNull()) {
             if (value == null) {
-                throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不能为空");
+                throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不能为空");
             }
         }
         if (paramVerify.isNotBlank()) {
             if (StringUtils.isBlank(paramValue)) {
-                throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不能为空");
+                throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不能为空");
             }
         }
         if (StringUtils.isNotBlank(paramValue)) {
             if (paramVerify.maxLen() != Integer.MAX_VALUE) {
                 if (paramValue.length() > paramVerify.maxLen()) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"长度超过限制");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"长度超过限制");
                 }
             }
             if (paramVerify.minLen() != -1) {
                 if (paramValue.length() < paramVerify.minLen()) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"长度小于超过限制");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"长度小于超过限制");
                 }
             }
             if (paramVerify.isIp()) {
                 if (!RegexUtil.isIp(paramValue)) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是有效的ip地址");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是有效的ip地址");
                 }
             }
             if (paramVerify.isIps()) {
                 if (!RegexUtil.isIps(paramValue)) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是有效的ip地址");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是有效的ip地址");
                 }
             }
             if (paramVerify.isNumber()) {
                 if (!RegexUtil.isNumber(paramValue)) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是正数");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是正数");
                 }
             }
             if (paramVerify.isHostOrIp()) {
                 if (!RegexUtil.isIp(paramValue) && !RegexUtil.isHost(paramValue)) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是有效的ip或域名");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是有效的ip或域名");
                 }
             }
             if (paramVerify.isBoolean()) {
                 if (!RegexUtil.isBoolean(paramValue)) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是正确的boolean值");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不是正确的boolean值");
                 }
             }
             if (paramVerify.isNotChinese()) {
                 if (RegexUtil.isChinese(paramValue)) {
-                    throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不可包含汉字");
+                    throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不可包含汉字");
                 }
             }
             if (paramVerify.isNull()) {
-                throw new ConfigServerException(ConfigServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不可修改");
+                throw new StepServerException(StepServerExceptionFactor.PARAM_VERIFY_FAIL, fieldName+"不可修改");
             }
         }
     }

@@ -42,6 +42,12 @@ public class StepService {
     @Autowired
     private AddressMapper addressMapper;
 
+    @Autowired
+    private ActivestepMapper activestepMapper;
+
+    @Autowired
+    private ActivextMapper activextMapper;
+
     private static Logger logger = LogManager.getLogger();
 
     public User login(JSONObject userInfo) {
@@ -71,6 +77,12 @@ public class StepService {
         stepChangeLog.setStepnum(Integer.parseInt(step));
         stepChangeLog.setCreatetime(DataTypeUtils.formatCurDateTime());
         stepChangeLogMapper.insert(stepChangeLog);
+
+        Activestep activestep = activestepMapper.selectByUserId(Integer.parseInt(userId));
+        if (activestep != null) {
+            activestep.setSumstep(activestep.getSumstep()+Integer.parseInt(step));
+            activestepMapper.updateByPrimaryKey(activestep);
+        }
         return user;
     }
 
@@ -237,5 +249,43 @@ public class StepService {
         }
 
         return new ResultMsg("兑换成功,在我的兑换中查看物品寄送进", 1);
+    }
+
+    public int createActive(String userId) throws Exception{
+        Activestep activestep = new Activestep();
+        activestep.setUserid(Integer.parseInt(userId));
+        activestep.setSumstep(0);
+        activestep.setStatus("1");
+        activestep.setCreatetime(DataTypeUtils.formatCurDateTime());
+        return activestepMapper.insert(activestep);
+    }
+
+    public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception{
+        List<Activext> activexts = activextMapper.selectByUserAndZanUser(userId, zanUserId);
+        if (activexts !=null || activexts.size()>0) {
+            return new ResultMsg(false, 403,"您今天已经赞过他了,明天再来吧~");
+        }
+
+        Activext activext = new Activext();
+        activext.setUserid(userId);
+        activext.setZanuserid(zanUserId);
+        activext.setCreatetime(DataTypeUtils.formatCurDateTime());
+        activextMapper.insert(activext);
+
+        Activestep activestep = activestepMapper.selectByUserId(userId);
+        activestep.setSumstep(activestep.getSumstep()+2000);
+        activestepMapper.updateByPrimaryKey(activestep);
+
+        return new ResultMsg("点赞成功,帮助好友获得2000步加成", 1);
+    }
+
+    public List<Activestep> getActiveTop() throws Exception{
+        List<Activestep> activesteps = activestepMapper.selectTop();
+        return activesteps;
+    }
+
+    public List<Activext> getActivext(Integer userId) throws Exception{
+        List<Activext> Activexts = activextMapper.selectByUserId(userId);
+        return Activexts;
     }
 }

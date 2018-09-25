@@ -1,42 +1,31 @@
 package com.aiwsport.web.interceptor;
 
-import com.aiwsport.core.ConfigServerException;
-import com.aiwsport.core.ConfigServerExceptionFactor;
-import com.google.common.collect.Maps;
+import com.aiwsport.core.StepServerException;
+import com.aiwsport.core.StepServerExceptionFactor;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class AccessHandlerInteceptor implements HandlerInterceptor {
-    private static Map<String, String> ips = Maps.newConcurrentMap();
 
-    static {
-        ips.put("*", "");
-        ips.put("10.77.9.41", "");
-        ips.put("10.77.29.179", "");
-        ips.put("10.77.29.180", "");
-    }
+    private static Logger logger = LogManager.getLogger();
 
     /**
      * controller 执行之前调用
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        //返回发出请求的IP地址
-        if (ips.get("*") != null) {
-            return true;
-        } else {
-            String ip = request.getRemoteAddr();
-            if (ips.get(ip) != null) {
-                return true;
-            } else {
-                throw new ConfigServerException(ConfigServerExceptionFactor.IP_NOT_VISIT_SERVER);
-            }
-        }
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        authSign(request, "y21gsdi35zas0921ksjxu3la5noiwns5ak821#2*ds+");
+        return true;
     }
 
     /**
@@ -56,6 +45,68 @@ public class AccessHandlerInteceptor implements HandlerInterceptor {
             throws Exception {
 
 
+    }
+
+    //进行签名限制
+    //签名规则 md5(base64(params) + appsecret)
+    protected void authSign(HttpServletRequest request, String secret) {
+        String paramString = getQueryString(request);
+        String param_sign = request.getParameter("sign");
+        commonAuthSign(paramString,param_sign,secret);
+    }
+
+    protected void commonAuthSign(String paramString,String param_sign,String secret){
+        String param = paramString;
+        String sign = DigestUtils.md5Hex(param + secret);
+        if (!sign.equals(param_sign)) {
+            logger.warn("paramString:" + paramString + ",param:" + param +
+                    ",param sign:" + param_sign + ",sign:" + sign);
+            throw new StepServerException(StepServerExceptionFactor.SIGN_IS_ERROR);
+        }
+    }
+
+    public static String getQueryString(HttpServletRequest request) {
+        SortedMap<String, String[]> params = getSortedParams(request);
+        return getQueryStringByMap(params);
+    }
+
+    private static SortedMap<String, String[]> getSortedParams(HttpServletRequest request) {
+        SortedMap<String, String[]> map = new TreeMap<String, String[]>();
+        Map<String, String[]> paramMap = request.getParameterMap();
+        if (paramMap == null) {
+            return map;
+        }
+        for (Object e : paramMap.entrySet()) {
+            Map.Entry<String, String[]> entry = (Map.Entry<String, String[]>) e;
+            String name = entry.getKey();
+            map.put(name, entry.getValue());
+        }
+        return map;
+    }
+
+    public static String getQueryStringByMap(SortedMap sortedMap) {
+        boolean first = true;
+        StringBuilder strbuf = new StringBuilder();
+        for (Object e : sortedMap.entrySet()) {
+            Map.Entry<String, String[]> entry = (Map.Entry<String, String[]>) e;
+            String name = entry.getKey();
+            if ("sign".equals(name)) {
+                continue;
+            }
+            String[] sValues = entry.getValue();
+            String sValue = "";
+            for (int i = 0; i < sValues.length; i++) {
+                sValue = sValues[i];
+                if (first == true) {
+                    //第一个参数
+                    first = false;
+                    strbuf.append(name).append("=").append(sValue);
+                } else if (first == false) {
+                    strbuf.append("&").append(name).append("=").append(sValue);
+                }
+            }
+        }
+        return strbuf.toString();
     }
 
 }
