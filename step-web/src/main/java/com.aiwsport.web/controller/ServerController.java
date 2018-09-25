@@ -3,10 +3,7 @@ package com.aiwsport.web.controller;
 import com.aiwsport.core.StepServerException;
 import com.aiwsport.core.StepServerExceptionFactor;
 import com.aiwsport.core.constant.ResultMsg;
-import com.aiwsport.core.entity.Address;
-import com.aiwsport.core.entity.Goods;
-import com.aiwsport.core.entity.QueryGoodChangeShow;
-import com.aiwsport.core.entity.User;
+import com.aiwsport.core.entity.*;
 import com.aiwsport.core.service.StepService;
 import com.aiwsport.web.utlis.AES;
 import com.aiwsport.web.utlis.HttpRequestor;
@@ -154,6 +151,32 @@ public class ServerController {
                                 @ParamVerify(isNotBlank = true, isNumber = true) String goodId) throws Exception{
         return stepService.changeGood(userId, goodId);
     }
+
+    public ResultMsg createActive(String userId) throws Exception {
+        int id = 0;
+        try{
+            id = stepService.createActive(userId);
+        } catch (Exception e) {
+            logger.error("save_address is error", e);
+        }
+
+        return new ResultMsg("报名成功", id == 0 ? "系统异常,请重试" : id);
+    }
+
+    public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception {
+        return stepService.zanActive(userId, zanUserId);
+    }
+
+    public ResultMsg getActiveTop() throws Exception {
+        List<Activestep> activesteps = stepService.getActiveTop();
+        return new ResultMsg("getActiveTopOk", activesteps);
+    }
+
+    public ResultMsg getActivext(Integer userId) throws Exception {
+        List<Activext> activexts = stepService.getActivext(userId);
+        return new ResultMsg("getActivextOk", activexts);
+    }
+
 
     @RequestMapping("/test.json")
     public ResultMsg test() throws Exception{
