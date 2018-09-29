@@ -39,8 +39,9 @@ public class ServerController {
 
     private static Logger logger = LogManager.getLogger();
 
-    @RequestMapping(value = "/step/onlogin.json")
-    public String onlogin(@ParamVerify(isNotBlank = true)String code) {
+    @RequestMapping(value = "/onlogin.json")
+    public String onlogin(@ParamVerify(isNotBlank = true)String code, String province,
+                          String avatarUrl, String nickName, String country, String city, String gender) {
         String appid = "wx169ddfe67114165d";
         String secret = "a9cb222c3a61f6ec58376d6c2853b015";
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appid + "&secret=" + secret + "&js_code=";
@@ -51,7 +52,7 @@ public class ServerController {
             userInfo = new HttpRequestor().doGet(url+code+url0);    //url+code+url0
             System.out.println(userInfo);
             jsonObject = JSONObject.parseObject(userInfo);
-            User user = stepService.login(jsonObject);
+            User user = stepService.login(jsonObject, province, avatarUrl, nickName, country, city, gender);
             jsonObject.put("coinnum", user.getCoinnum()+"");
             jsonObject.put("userid", user.getId()+"");
         } catch (Exception e) {
@@ -152,23 +153,38 @@ public class ServerController {
         return stepService.changeGood(userId, goodId);
     }
 
-    public ResultMsg createActive(String userId) throws Exception {
-        int id = 0;
+
+    @RequestMapping("/step/is_join_active.json")
+    public ResultMsg isJoinActive(String userId, String enterType) throws Exception {
+        int flag = 0;
         try{
-            id = stepService.createActive(userId);
+            flag = stepService.isJoinActive(userId, enterType);
         } catch (Exception e) {
-            logger.error("save_address is error", e);
+            logger.error("create_active is error", e);
         }
 
-        return new ResultMsg("报名成功", id == 0 ? "系统异常,请重试" : id);
+        return new ResultMsg("isJoinActiveOk", flag);
+    }
+
+    @RequestMapping("/step/create_active.json")
+    public ResultMsg createActive(String userId, String enterType) throws Exception {
+        int id = 0;
+        try{
+            return stepService.createActive(userId, enterType);
+        } catch (Exception e) {
+            logger.error("create_active is error", e);
+        }
+
+        return new ResultMsg("createActive is error", "系统异常,请重试");
     }
 
     public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception {
         return stepService.zanActive(userId, zanUserId);
     }
 
+    @RequestMapping("/step/get_active_top.json")
     public ResultMsg getActiveTop() throws Exception {
-        List<Activestep> activesteps = stepService.getActiveTop();
+        List<QueryActivestepShow> activesteps = stepService.getActiveTop();
         return new ResultMsg("getActiveTopOk", activesteps);
     }
 

@@ -50,7 +50,8 @@ public class StepService {
 
     private static Logger logger = LogManager.getLogger();
 
-    public User login(JSONObject userInfo) {
+    public User login(JSONObject userInfo, String province,
+                      String avatarUrl, String nickName, String country, String city, String gender) {
         // 获取openid {"session_key":"VEX3GZ5cG31i1+DeLyqHyg==","openid":"ov8p35OEtLxO7nILiHq6rmBCpkv4"}
         String openId = userInfo.getString("openid");
         User user = userMapper.getByOpenId(openId);
@@ -59,6 +60,11 @@ public class StepService {
             User userNew = new User();
             userNew.setOpenid(openId);
             userNew.setCoinnum(0);
+            userNew.setAvatarurl(avatarUrl);
+            userNew.setCity(city);
+            userNew.setGender(gender);
+            userNew.setNickname(nickName);
+            userNew.setProvince(province);
             userMapper.insert(userNew);
             return userNew;
         }
@@ -251,13 +257,66 @@ public class StepService {
         return new ResultMsg("兑换成功,在我的兑换中查看物品寄送进", 1);
     }
 
-    public int createActive(String userId) throws Exception{
-        Activestep activestep = new Activestep();
-        activestep.setUserid(Integer.parseInt(userId));
-        activestep.setSumstep(0);
-        activestep.setStatus("1");
-        activestep.setCreatetime(DataTypeUtils.formatCurDateTime());
-        return activestepMapper.insert(activestep);
+    public ResultMsg createActive(String userId, String type) throws Exception{
+        User user = userMapper.selectByPrimaryKey(Integer.parseInt(userId));
+        switch (type){
+            case "1":// 10000步
+                if (user.getCoinnum() < 30) {
+                   return new ResultMsg("createActiveError", "能量不足");
+                }
+                user.setCoinnum(user.getCoinnum()-30);
+                break;
+            case "2":// 15000步
+                if (user.getCoinnum() < 50) {
+                    return new ResultMsg("createActiveError", "能量不足");
+                }
+                user.setCoinnum(user.getCoinnum()-50);
+                break;
+            case "3":// 20000步
+                if (user.getCoinnum() < 70) {
+                    return new ResultMsg("createActiveError", "能量不足");
+                }
+                user.setCoinnum(user.getCoinnum()-70);
+                break;
+            case "4":// 全区
+                if (user.getCoinnum() < 5) {
+                    return new ResultMsg("createActiveError", "能量不足");
+                }
+                user.setCoinnum(user.getCoinnum()-5);
+                break;
+            default:
+                break;
+        }
+        userMapper.updateByPrimaryKey(user);
+
+        Activestep activestep = activestepMapper.selectByUserId(Integer.parseInt(userId));
+        if (activestep == null) {
+            Activestep newActivestep = new Activestep();
+            newActivestep.setUserid(Integer.parseInt(userId));
+            newActivestep.setSumstep(0);
+            newActivestep.setStatus("1");
+            newActivestep.setType(type);
+            newActivestep.setCreatetime(DataTypeUtils.formatCurDateTime());
+            activestepMapper.insert(newActivestep);
+            return new ResultMsg("createActiveOk", "报名成功");
+        }
+
+        if (activestep.getType().contains(type)) {
+            return new ResultMsg("createActiveError", "您已报名");
+        }
+
+        activestep.setType(activestep.getType()+","+type);
+        activestepMapper.updateByPrimaryKey(activestep);
+        return new ResultMsg("createActiveOk", "报名成功");
+    }
+
+    public int isJoinActive(String userId, String type) throws Exception{
+        Activestep activestep = activestepMapper.selectByUserId(Integer.parseInt(userId));
+        if (activestep == null || !activestep.getType().contains(type)) {
+            return 0;
+        }
+
+        return 1;
     }
 
     public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception{
@@ -273,15 +332,37 @@ public class StepService {
         activextMapper.insert(activext);
 
         Activestep activestep = activestepMapper.selectByUserId(userId);
-        activestep.setSumstep(activestep.getSumstep()+2000);
+        activestep.setSumstep(activestep.getSumstep()+1000);
         activestepMapper.updateByPrimaryKey(activestep);
 
         return new ResultMsg("点赞成功,帮助好友获得2000步加成", 1);
     }
 
-    public List<Activestep> getActiveTop() throws Exception{
+    public List<QueryActivestepShow> getActiveTop() throws Exception{
         List<Activestep> activesteps = activestepMapper.selectTop();
-        return activesteps;
+        List<QueryActivestepShow> queryActivestepShows = new ArrayList<QueryActivestepShow>();
+        for (Activestep activestep : activesteps) {
+            QueryActivestepShow queryActivestepShow = new QueryActivestepShow();
+            queryActivestepShow.setUserid(activestep.getUserid());
+            User user = userMapper.selectByPrimaryKey(activestep.getUserid());
+            queryActivestepShow.setNickname(user.getNickname());
+            queryActivestepShow.setAvatarurl(user.getAvatarurl());
+            queryActivestepShow.setSumstep(activestep.getSumstep());
+
+            List<Activext> activexts = activextMapper.selectByUserId(activestep.getUserid());
+            StringBuilder strbu = new StringBuilder();
+            for (Activext activext : activexts) {
+                User zanUser = userMapper.selectByPrimaryKey(activext.getZanuserid());
+                strbu.append(zanUser.getAvatarurl()).append(",");
+            }
+
+            if (StringUtils.isNotBlank(strbu.toString())) {
+                queryActivestepShow.setZanavatarurl(strbu.toString().substring(0, strbu.length()-2));
+            }
+            queryActivestepShows.add(queryActivestepShow);
+        }
+
+        return queryActivestepShows;
     }
 
     public List<Activext> getActivext(Integer userId) throws Exception{

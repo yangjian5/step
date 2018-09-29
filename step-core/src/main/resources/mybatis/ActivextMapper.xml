@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.aiwsport.core.ActivextMapper" >
-  <resultMap id="BaseResultMap" type="com.aiwsport.core.Activext" >
+<mapper namespace="com.aiwsport.core.mapper.ActivextMapper" >
+  <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Activext" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="userId" property="userid" jdbcType="INTEGER" />
     <result column="zanUserId" property="zanuserid" jdbcType="INTEGER" />
@@ -11,7 +11,7 @@
     delete from activext
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.aiwsport.core.Activext" >
+  <insert id="insert" parameterType="com.aiwsport.core.entity.Activext" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -20,7 +20,7 @@
     values (#{userid,jdbcType=INTEGER}, #{zanuserid,jdbcType=INTEGER}, #{createtime,jdbcType=INTEGER}
       )
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.Activext" >
+  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Activext" >
     update activext
     set userId = #{userid,jdbcType=INTEGER},
       zanUserId = #{zanuserid,jdbcType=INTEGER},

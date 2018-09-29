@@ -9,6 +9,8 @@ public class Activestep {
 
     private String status;
 
+    private String type;
+
     private String createtime;
 
     private String endtime;
@@ -59,5 +61,13 @@ public class Activestep {
 
     public void setEndtime(String endtime) {
         this.endtime = endtime;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
