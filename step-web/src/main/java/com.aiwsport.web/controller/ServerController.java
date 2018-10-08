@@ -178,6 +178,7 @@ public class ServerController {
         return new ResultMsg("createActive is error", "系统异常,请重试");
     }
 
+    @RequestMapping("/step/zan_active.json")
     public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception {
         return stepService.zanActive(userId, zanUserId);
     }

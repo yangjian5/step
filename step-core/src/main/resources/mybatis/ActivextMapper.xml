@@ -39,11 +39,12 @@
   <select id="selectByUserAndZanUser" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select id, userId, zanUserId, createTime
     from activext
-    where userId = #{userId,jdbcType=INTEGER} and zanUserId = #{zanUserId,jdbcType=INTEGER}
+    where userId = #{arg0,jdbcType=INTEGER} and zanUserId = #{arg1,jdbcType=INTEGER}
+    and createTime BETWEEN date(now()) AND DATE_ADD(date(now()),INTERVAL 1 DAY)
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select id, userId, zanUserId, createTime
     from activext
-    where userId = #{userId,jdbcType=INTEGER}
+    where userId = #{userId,jdbcType=INTEGER} order by createTime desc limit 5
   </select>
 </mapper>

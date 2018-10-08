@@ -321,7 +321,7 @@ public class StepService {
 
     public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception{
         List<Activext> activexts = activextMapper.selectByUserAndZanUser(userId, zanUserId);
-        if (activexts !=null || activexts.size()>0) {
+        if (activexts !=null && activexts.size()>0) {
             return new ResultMsg(false, 403,"您今天已经赞过他了,明天再来吧~");
         }
 
@@ -350,14 +350,15 @@ public class StepService {
             queryActivestepShow.setSumstep(activestep.getSumstep());
 
             List<Activext> activexts = activextMapper.selectByUserId(activestep.getUserid());
-            StringBuilder strbu = new StringBuilder();
+            List<User> zanUserList = new ArrayList<User>();
             for (Activext activext : activexts) {
                 User zanUser = userMapper.selectByPrimaryKey(activext.getZanuserid());
-                strbu.append(zanUser.getAvatarurl()).append(",");
+
+                zanUserList.add(zanUser);
             }
 
-            if (StringUtils.isNotBlank(strbu.toString())) {
-                queryActivestepShow.setZanavatarurl(strbu.toString().substring(0, strbu.length()-2));
+            if (zanUserList.size() > 0) {
+                queryActivestepShow.setZanUser(zanUserList);
             }
             queryActivestepShows.add(queryActivestepShow);
         }

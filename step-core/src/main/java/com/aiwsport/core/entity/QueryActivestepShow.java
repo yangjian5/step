@@ -1,5 +1,7 @@
 package com.aiwsport.core.entity;
 
+import java.util.List;
+
 /**
  * Created by yangjian9 on 2018/9/29.
  */
@@ -14,11 +16,7 @@ public class QueryActivestepShow {
 
     private String avatarurl;
 
-    private Integer zanuserid;
-
-    private String zanavatarurl;
-
-    private String zannickname;
+    private List<User> zanUser;
 
     public Integer getId() {
         return id;
@@ -60,27 +58,11 @@ public class QueryActivestepShow {
         this.avatarurl = avatarurl;
     }
 
-    public Integer getZanuserid() {
-        return zanuserid;
+    public List<User> getZanUser() {
+        return zanUser;
     }
 
-    public void setZanuserid(Integer zanuserid) {
-        this.zanuserid = zanuserid;
-    }
-
-    public String getZanavatarurl() {
-        return zanavatarurl;
-    }
-
-    public void setZanavatarurl(String zanavatarurl) {
-        this.zanavatarurl = zanavatarurl;
-    }
-
-    public String getZannickname() {
-        return zannickname;
-    }
-
-    public void setZannickname(String zannickname) {
-        this.zannickname = zannickname;
+    public void setZanUser(List<User> zanUser) {
+        this.zanUser = zanUser;
     }
 }
