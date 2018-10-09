@@ -84,7 +84,7 @@ public class ServerController {
     public ResultMsg getAddress(@ParamVerify(isNotBlank = true, isNumber = true) String userId) throws Exception{
         Address address = stepService.getAddress(userId);
         if (address == null) {
-            address = new Address();
+            return new ResultMsg(false, 403,"getAddressError");
         }
 
         return new ResultMsg("getAddressOK", address);
@@ -144,7 +144,7 @@ public class ServerController {
             logger.error("save_address is error", e);
         }
 
-        return new ResultMsg("保存收货地址id成功", id == 0 ? "系统异常,请重试" : id);
+        return new ResultMsg("保存收货地址成功", id == 0 ? "系统异常,请重试" : id);
     }
 
     @RequestMapping("/step/change_good.json")
