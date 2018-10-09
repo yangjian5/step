@@ -25,7 +25,7 @@
       avatarUrl, gender, city, 
       province, country, language
       )
-    values (#{openid,jdbcType=VARCHAR}, #{coinnum,jdbcType=INTEGER}, #{nickname,jdbcType=VARCHAR}, 
+    values (#{openid,jdbcType=VARCHAR}, #{coinnum,jdbcType=DOUBLE}, #{nickname,jdbcType=VARCHAR},
       #{avatarurl,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, #{language,jdbcType=VARCHAR}
       )
@@ -33,7 +33,7 @@
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.User" >
     update user
     set openId = #{openid,jdbcType=VARCHAR},
-      coinNum = #{coinnum,jdbcType=INTEGER},
+      coinNum = #{coinnum,jdbcType=DOUBLE},
       nickName = #{nickname,jdbcType=VARCHAR},
       avatarUrl = #{avatarurl,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=VARCHAR},

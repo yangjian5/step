@@ -5,7 +5,7 @@ public class User {
 
     private String openid;
 
-    private Integer coinnum;
+    private double coinnum;
 
     private String nickname;
 
@@ -37,11 +37,11 @@ public class User {
         this.openid = openid;
     }
 
-    public Integer getCoinnum() {
+    public double getCoinnum() {
         return coinnum;
     }
 
-    public void setCoinnum(Integer coinnum) {
+    public void setCoinnum(double coinnum) {
         this.coinnum = coinnum;
     }
 

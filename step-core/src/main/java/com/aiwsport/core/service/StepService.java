@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,8 +75,15 @@ public class StepService {
 
     public User changeCoin(String step, String openId, String userId) throws Exception{
         User user = userMapper.getByOpenId(openId);
-        int newCoinNum = Integer.parseInt(step);
-        user.setCoinnum(user.getCoinnum()+newCoinNum);
+        double newCoinNum = Integer.parseInt(step) * 0.0005;
+
+        double sumCoin = newCoinNum + user.getCoinnum();
+
+        BigDecimal b = new BigDecimal(sumCoin);
+
+        sumCoin = b.setScale(4,  RoundingMode.HALF_UP).doubleValue();
+
+        user.setCoinnum(sumCoin);
         userMapper.updateByPrimaryKey(user);
 
         StepChangeLog stepChangeLog = new StepChangeLog();
@@ -239,7 +248,11 @@ public class StepService {
             goodsMapper.updateByPrimaryKey(goods);
 
             // 扣减币数
-            user.setCoinnum(user.getCoinnum()-goods.getSalecoin());
+            double surplus = user.getCoinnum()-goods.getSalecoin();
+            BigDecimal b = new BigDecimal(surplus);
+            surplus = b.setScale(4,  RoundingMode.HALF_UP).doubleValue();
+
+            user.setCoinnum(surplus);
             userMapper.updateByPrimaryKey(user);
 
             // 增加记录
@@ -264,25 +277,32 @@ public class StepService {
                 if (user.getCoinnum() < 30) {
                    return new ResultMsg("createActiveError", "能量不足");
                 }
-                user.setCoinnum(user.getCoinnum()-30);
+                double surplus = user.getCoinnum()-30;
+                BigDecimal b = new BigDecimal(surplus);
+                surplus = b.setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                user.setCoinnum(surplus);
                 break;
             case "2":// 15000步
                 if (user.getCoinnum() < 50) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                user.setCoinnum(user.getCoinnum()-50);
+                double surplus1 = new BigDecimal(user.getCoinnum()-50).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                user.setCoinnum(surplus1);
                 break;
             case "3":// 20000步
                 if (user.getCoinnum() < 70) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                user.setCoinnum(user.getCoinnum()-70);
+                double surplus2 = new BigDecimal(user.getCoinnum()-70).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                user.setCoinnum(surplus2);
                 break;
             case "4":// 全区
-                if (user.getCoinnum() < 5) {
+                if (user.getCoinnum() < 10) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                user.setCoinnum(user.getCoinnum()-5);
+                double surplus3 = new BigDecimal(user.getCoinnum()-10).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                user.setCoinnum(surplus3);
+                user.setCoinnum(user.getCoinnum()-10);
                 break;
             default:
                 break;

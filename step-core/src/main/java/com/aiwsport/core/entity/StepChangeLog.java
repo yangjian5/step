@@ -1,5 +1,6 @@
 package com.aiwsport.core.entity;
 
+
 public class StepChangeLog {
     private Integer id;
 
@@ -7,7 +8,7 @@ public class StepChangeLog {
 
     private Integer stepnum;
 
-    private Integer coinnum;
+    private double coinnum;
 
     private String createtime;
 
@@ -35,11 +36,11 @@ public class StepChangeLog {
         this.stepnum = stepnum;
     }
 
-    public Integer getCoinnum() {
+    public double getCoinnum() {
         return coinnum;
     }
 
-    public void setCoinnum(Integer coinnum) {
+    public void setCoinnum(double coinnum) {
         this.coinnum = coinnum;
     }
 
