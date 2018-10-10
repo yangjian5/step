@@ -52,6 +52,7 @@ public class ServerController {
             userInfo = new HttpRequestor().doGet(url+code+url0);    //url+code+url0
             System.out.println(userInfo);
             jsonObject = JSONObject.parseObject(userInfo);
+            nickName = nickName.replaceAll("[^\\u0000-\\uFFFF]", "?");
             User user = stepService.login(jsonObject, province, avatarUrl, nickName, country, city, gender);
             jsonObject.put("coinnum", user.getCoinnum()+"");
             jsonObject.put("userid", user.getId()+"");
