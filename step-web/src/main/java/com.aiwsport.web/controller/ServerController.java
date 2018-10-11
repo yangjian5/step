@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.*;
 
@@ -193,6 +195,39 @@ public class ServerController {
     public ResultMsg getActivext(Integer userId) throws Exception {
         List<Activext> activexts = stepService.getActivext(userId);
         return new ResultMsg("getActivextOk", activexts);
+    }
+
+    @RequestMapping("/step/get_active_info.json")
+    public ResultMsg getActiveInfo(String enterType) throws Exception {
+        List<Activestep> activesteps = stepService.getActiveInfo(enterType);
+        int activeCount = activesteps.size();
+
+        JSONObject jsonObject = new JSONObject();
+        if (activesteps == null || activeCount < 1) {
+            jsonObject.put("joinUserCount", 100);
+            jsonObject.put("reward", 0);
+        } else {
+            jsonObject.put("joinUserCount", activeCount + 100);
+            int reward = 0;
+            switch (enterType){
+                case "1":// 10000步
+                    reward = activeCount * 30 + 100;
+                    break;
+                case "2":// 15000步
+                    reward = activeCount * 50 + 200;
+                    break;
+                case "3":// 20000步
+                    reward = activeCount * 70 + 300;
+                    break;
+                case "4":// 全区
+                    reward = activeCount * 10 + 2000;
+                    break;
+                default:
+                    break;
+            }
+            jsonObject.put("reward", reward);
+        }
+        return new ResultMsg("getActiveInfoOk", jsonObject);
     }
 
 

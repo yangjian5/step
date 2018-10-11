@@ -3,6 +3,7 @@ package com.aiwsport.core.mapper;
 
 
 import com.aiwsport.core.entity.Activestep;
+import com.aiwsport.core.entity.Activext;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface ActivestepMapper {
     Activestep selectByUserId(Integer userId);
 
     List<Activestep> selectTop();
+
+    List<Activestep> selectByType(String type);
 }

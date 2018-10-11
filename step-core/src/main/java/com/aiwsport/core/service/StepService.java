@@ -387,7 +387,12 @@ public class StepService {
     }
 
     public List<Activext> getActivext(Integer userId) throws Exception{
-        List<Activext> Activexts = activextMapper.selectByUserId(userId);
-        return Activexts;
+        List<Activext> activexts = activextMapper.selectByUserId(userId);
+        return activexts;
+    }
+
+    public List<Activestep> getActiveInfo(String type) throws Exception{
+        List<Activestep> activesteps = activestepMapper.selectByType(type);
+        return activesteps;
     }
 }

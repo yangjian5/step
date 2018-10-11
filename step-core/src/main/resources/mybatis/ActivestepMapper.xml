@@ -53,4 +53,9 @@
     select id, userId, sumStep, status, type, createTime, endTime
     from activestep order by sumStep desc limit 100
   </select>
+
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, userId, sumStep, status, type, createTime, endTime
+    from activestep where type like CONCAT('%', #{type, jdbcType=VARCHAR}, '%') and endTime > now()
+  </select>
 </mapper>
