@@ -2,7 +2,7 @@ package com.aiwsport.web.interceptor;
 
 import com.aiwsport.core.StepServerException;
 import com.aiwsport.core.StepServerExceptionFactor;
-import org.apache.commons.codec.binary.Base64;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -56,10 +57,9 @@ public class AccessHandlerInteceptor implements HandlerInterceptor {
     }
 
     protected void commonAuthSign(String paramString,String param_sign,String secret){
-        String param = paramString;
-        String sign = DigestUtils.md5Hex(param + secret);
+        String sign = DigestUtils.md5Hex(URLEncoder.encode(paramString) + secret);
         if (!sign.equals(param_sign)) {
-            logger.warn("paramString:" + paramString + ",param:" + param +
+            logger.warn("paramString:" + paramString +
                     ",param sign:" + param_sign + ",sign:" + sign);
             throw new StepServerException(StepServerExceptionFactor.SIGN_IS_ERROR);
         }

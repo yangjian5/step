@@ -1,11 +1,11 @@
 package com.aiwsport.core.entity;
 
+import java.util.Date;
+
 public class Activestep {
     private Integer id;
 
     private Integer userid;
-
-    private Integer sumstep;
 
     private String status;
 
@@ -31,20 +31,20 @@ public class Activestep {
         this.userid = userid;
     }
 
-    public Integer getSumstep() {
-        return sumstep;
-    }
-
-    public void setSumstep(Integer sumstep) {
-        this.sumstep = sumstep;
-    }
-
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getCreatetime() {
@@ -61,13 +61,5 @@ public class Activestep {
 
     public void setEndtime(String endtime) {
         this.endtime = endtime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }

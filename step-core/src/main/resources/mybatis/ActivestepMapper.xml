@@ -4,7 +4,6 @@
   <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Activestep" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="userId" property="userid" jdbcType="INTEGER" />
-    <result column="sumStep" property="sumstep" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
@@ -18,17 +17,16 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into activestep (userId, sumStep, status, type,
-        createTime, endTime
+    insert into activestep (userId, status,
+      type, createTime, endTime
       )
-    values (#{userid,jdbcType=INTEGER}, #{sumstep,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
-          #{createtime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}
+    values (#{userid,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Activestep" >
     update activestep
     set userId = #{userid,jdbcType=INTEGER},
-      sumStep = #{sumstep,jdbcType=INTEGER},
       status = #{status,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       createTime = #{createtime,jdbcType=TIMESTAMP},
@@ -36,26 +34,28 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, sumStep, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime
     from activestep
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, userId, sumStep, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime
     from activestep
+  </select>
+  <select id="selectByUserIdAndType" resultMap="BaseResultMap" >
+    select id, userId, status, type, createTime, endTime
+    from activestep
+    where userId = #{arg0} and type = #{arg1} and endTime > now()
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, sumStep, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime
     from activestep
-    where userId = #{userId,jdbcType=INTEGER}
+    where userId = #{userId,jdbcType=INTEGER} and endTime > now()
   </select>
-  <select id="selectTop" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, sumStep, status, type, createTime, endTime
-    from activestep order by sumStep desc limit 100
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, userId, status, type, createTime, endTime
+    from activestep
+    where type = #{type,jdbcType=VARCHAR} and endTime > now()
   </select>
 
-  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select id, userId, sumStep, status, type, createTime, endTime
-    from activestep where type like CONCAT('%', #{type, jdbcType=VARCHAR}, '%') and endTime > now()
-  </select>
 </mapper>

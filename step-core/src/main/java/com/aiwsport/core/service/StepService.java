@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -49,6 +50,9 @@ public class StepService {
 
     @Autowired
     private ActivextMapper activextMapper;
+
+    @Autowired
+    private ActivedataMapper activedataMapper;
 
     private static Logger logger = LogManager.getLogger();
 
@@ -93,10 +97,21 @@ public class StepService {
         stepChangeLog.setCreatetime(DataTypeUtils.formatCurDateTime());
         stepChangeLogMapper.insert(stepChangeLog);
 
-        Activestep activestep = activestepMapper.selectByUserId(Integer.parseInt(userId));
-        if (activestep != null) {
-            activestep.setSumstep(activestep.getSumstep()+Integer.parseInt(step));
-            activestepMapper.updateByPrimaryKey(activestep);
+        List<Activestep> activesteps = activestepMapper.selectByUserId(Integer.parseInt(userId));
+        if (activesteps != null && activesteps.size() > 0) {
+            for (Activestep activestep : activesteps) {
+                Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
+                if ("4".equals(activestep.getType())) {
+                    activedata.setSumstep(activedata.getSumstep()+Integer.parseInt(step));
+                    activestepMapper.updateByPrimaryKey(activestep);
+                }
+
+                if ("1,2,3".contains(activestep.getType())) {
+                    activedata.setDaystep(activedata.getDaystep()+Integer.parseInt(step));
+                    activestepMapper.updateByPrimaryKey(activestep);
+                }
+
+            }
         }
         return user;
     }
@@ -224,6 +239,7 @@ public class StepService {
         return addressMapper.updateByPrimaryKey(adderss);
     }
 
+    @Transactional
     public ResultMsg changeGood(String userId, String goodId){
         try {
             Goods goods = goodsMapper.selectByPrimaryKey(Integer.parseInt(goodId));
@@ -270,8 +286,14 @@ public class StepService {
         return new ResultMsg("兑换成功,在我的兑换中查看物品寄送进", 1);
     }
 
+    @Transactional
     public ResultMsg createActive(String userId, String type) throws Exception{
         User user = userMapper.selectByPrimaryKey(Integer.parseInt(userId));
+        Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), type);
+        if (activestep != null) {
+            return new ResultMsg("createActiveError", "您已报名");
+        }
+
         switch (type){
             case "1":// 10000步
                 if (user.getCoinnum() < 30) {
@@ -304,34 +326,42 @@ public class StepService {
                 user.setCoinnum(surplus3);
                 user.setCoinnum(user.getCoinnum()-10);
                 break;
+            case "5":// 早起
+                if (user.getCoinnum() < 10) {
+                    return new ResultMsg("createActiveError", "能量不足");
+                }
+                double surplus4 = new BigDecimal(user.getCoinnum()-10).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                user.setCoinnum(surplus4);
+                user.setCoinnum(user.getCoinnum()-10);
+                break;
             default:
                 break;
         }
+
+        Activestep newActivestep = new Activestep();
+        newActivestep.setUserid(Integer.parseInt(userId));
+        newActivestep.setStatus("1");
+        newActivestep.setType(type);
+        newActivestep.setCreatetime(DataTypeUtils.formatCurDateTime());
+        String endTime = DataTypeUtils.formatTimeStamp_yyyy_mm_dd(DataTypeUtils.addOrMinusDay(DataTypeUtils.getCurrentDate(), 1));
+        newActivestep.setEndtime(endTime+" 23:59:59");
+        int activestepId = activestepMapper.insert(newActivestep);
+
+        Activedata activedata = new Activedata();
+        activedata.setActivesstepid(newActivestep.getId());
+        activedata.setType(type);
+        activedata.setStatus("1");
+        activedata.setDaystep(0);
+        activedata.setSumstep(0);
+        activedata.setIssign("0");
+        int activedataId = activedataMapper.insert(activedata);
+
         userMapper.updateByPrimaryKey(user);
-
-        Activestep activestep = activestepMapper.selectByUserId(Integer.parseInt(userId));
-        if (activestep == null) {
-            Activestep newActivestep = new Activestep();
-            newActivestep.setUserid(Integer.parseInt(userId));
-            newActivestep.setSumstep(0);
-            newActivestep.setStatus("1");
-            newActivestep.setType(type);
-            newActivestep.setCreatetime(DataTypeUtils.formatCurDateTime());
-            activestepMapper.insert(newActivestep);
-            return new ResultMsg("createActiveOk", "报名成功");
-        }
-
-        if (activestep.getType().contains(type)) {
-            return new ResultMsg("createActiveError", "您已报名");
-        }
-
-        activestep.setType(activestep.getType()+","+type);
-        activestepMapper.updateByPrimaryKey(activestep);
         return new ResultMsg("createActiveOk", "报名成功");
     }
 
     public int isJoinActive(String userId, String type) throws Exception{
-        Activestep activestep = activestepMapper.selectByUserId(Integer.parseInt(userId));
+        Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), type);
         if (activestep == null || !activestep.getType().contains(type)) {
             return 0;
         }
@@ -339,6 +369,7 @@ public class StepService {
         return 1;
     }
 
+    @Transactional
     public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception{
         List<Activext> activexts = activextMapper.selectByUserAndZanUser(userId, zanUserId);
         if (activexts !=null && activexts.size()>0) {
@@ -351,29 +382,40 @@ public class StepService {
         activext.setCreatetime(DataTypeUtils.formatCurDateTime());
         activextMapper.insert(activext);
 
-        Activestep activestep = activestepMapper.selectByUserId(userId);
-        activestep.setSumstep(activestep.getSumstep()+1000);
-        activestepMapper.updateByPrimaryKey(activestep);
-
-        return new ResultMsg("点赞成功,帮助好友获得2000步加成", 1);
+        Activestep activestep = activestepMapper.selectByUserIdAndType(userId, "4");
+        Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
+        activedata.setSumstep(activedata.getSumstep()+500);
+        activedataMapper.updateByPrimaryKey(activedata);
+        return new ResultMsg("+ 500步", 1);
     }
 
     public List<QueryActivestepShow> getActiveTop() throws Exception{
-        List<Activestep> activesteps = activestepMapper.selectTop();
+        List<Activedata> activedatas = activedataMapper.selectTop("4");
         List<QueryActivestepShow> queryActivestepShows = new ArrayList<QueryActivestepShow>();
-        for (Activestep activestep : activesteps) {
+        for (Activedata activedata : activedatas) {
             QueryActivestepShow queryActivestepShow = new QueryActivestepShow();
+            Activestep activestep = activestepMapper.selectByPrimaryKey(activedata.getActivesstepid());
+            if (activestep == null) {
+                continue;
+            }
+
             queryActivestepShow.setUserid(activestep.getUserid());
             User user = userMapper.selectByPrimaryKey(activestep.getUserid());
+            if (user == null) {
+                continue;
+            }
+
             queryActivestepShow.setNickname(user.getNickname());
             queryActivestepShow.setAvatarurl(user.getAvatarurl());
-            queryActivestepShow.setSumstep(activestep.getSumstep());
-
+            queryActivestepShow.setSumstep(activedata.getSumstep());
             List<Activext> activexts = activextMapper.selectByUserId(activestep.getUserid());
+            if (activexts == null) {
+                continue;
+            }
+
             List<User> zanUserList = new ArrayList<User>();
             for (Activext activext : activexts) {
                 User zanUser = userMapper.selectByPrimaryKey(activext.getZanuserid());
-
                 zanUserList.add(zanUser);
             }
 

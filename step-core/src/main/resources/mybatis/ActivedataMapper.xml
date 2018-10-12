@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aiwsport.core.mapper.ActivedataMapper" >
+  <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Activedata" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="activesStepId" property="activesstepid" jdbcType="INTEGER" />
+    <result column="isSign" property="issign" jdbcType="VARCHAR" />
+    <result column="sumStep" property="sumstep" jdbcType="INTEGER" />
+    <result column="dayStep" property="daystep" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from activedata
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.aiwsport.core.entity.Activedata" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into activedata (activesStepId, isSign, sumStep, 
+      dayStep, type, status)
+    values (#{activesstepid,jdbcType=INTEGER}, #{issign,jdbcType=VARCHAR}, #{sumstep,jdbcType=INTEGER}, 
+      #{daystep,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Activedata" >
+    update activedata
+    set activesStepId = #{activesstepid,jdbcType=INTEGER},
+      isSign = #{issign,jdbcType=VARCHAR},
+      sumStep = #{sumstep,jdbcType=INTEGER},
+      dayStep = #{daystep,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, activesStepId, isSign, sumStep, dayStep, type, status
+    from activedata
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, activesStepId, isSign, sumStep, dayStep, type, status
+    from activedata
+  </select>
+  <select id="selectByActiveStepId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, activesStepId, isSign, sumStep, dayStep, type, status
+    from activedata
+    where activesStepId = #{activesStepId,jdbcType=INTEGER}
+  </select>
+  <select id="selectTop" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, activesStepId, isSign, sumStep, dayStep, type, status
+    from activedata
+    where type = #{type,jdbcType=VARCHAR} and status='1' order by sumStep limit 100
+  </select>
+</mapper>
