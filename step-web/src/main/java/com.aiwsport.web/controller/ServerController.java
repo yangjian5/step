@@ -7,6 +7,7 @@ import com.aiwsport.core.entity.*;
 import com.aiwsport.core.service.StepService;
 import com.aiwsport.web.utlis.AES;
 import com.aiwsport.web.utlis.HttpRequestor;
+import com.aiwsport.web.utlis.ImageUtils;
 import com.aiwsport.web.verify.ParamObjVerify;
 import com.aiwsport.web.verify.ParamVerify;
 import com.alibaba.fastjson.JSONArray;
@@ -18,13 +19,22 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.*;
 
@@ -67,12 +77,13 @@ public class ServerController {
     @RequestMapping("/step/decrypt.json")
     public ResultMsg decrypt(String encryptedData, String iv, @ParamVerify(isNotBlank = true) String sessionKey,
                              @ParamVerify(isNotBlank = true, isNumber = true) String userId, String token,Integer days) throws Exception{
-        int toDayStep = stepService.decrypt(encryptedData, iv, sessionKey, Integer.parseInt(userId), token, days);
-        if (toDayStep == -1) {
+        Map<String, String> dayStepMap = stepService.decrypt(encryptedData, iv, sessionKey, Integer.parseInt(userId), token, days);
+
+        if (dayStepMap == null) {
             return new ResultMsg(false, 403,"系统有点忙, 请刷新下");
         }
 
-        return new ResultMsg("decryptOK", toDayStep);
+        return new ResultMsg("decryptOK", dayStepMap);
     }
 
     @RequestMapping("/step/change_coin.json")
@@ -238,7 +249,7 @@ public class ServerController {
         }
 
         if (isScuess == 2) {
-            return new ResultMsg(false, 403,"已经打卡,奖励随后发放");
+            return new ResultMsg(false, 403,"已经打卡,奖励k随后发放");
         }
 
         return new ResultMsg("doSignOk", "打卡成功");
@@ -247,5 +258,33 @@ public class ServerController {
     @RequestMapping("/test.json")
     public ResultMsg test() throws Exception{
         return new ResultMsg("服务启动成功", 9276);
+    }
+
+//    @RequestMapping("/build_img.json")
+//    public ResultMsg buildImg() throws Exception{
+//        BufferedImage d = ImageUtils.buildImg("杨建48993步",
+//                "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83epnRkt8ueSLqcIUPr7XKaNwmn3y0OvoyFjaNRXwByvtKeZ1JlCdCbuqrELauJflWuPkvVcF7s48Bw/132",
+//                "/Users/yangjian9/Desktop/data.png");
+//        return new ResultMsg("buildImgOK", d);
+//    }
+
+    @RequestMapping(value = "/build_img.json",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    public byte[] getImage(Integer daySumStep, String userId) throws Exception {
+        if ("0".equals(userId)) {
+            return null;
+        }
+
+        User user = stepService.getUser(userId);
+        BufferedImage bufferedImage = ImageUtils.buildImg(user.getNickname()+" 今日行走 "+daySumStep+" 步",
+                user.getAvatarurl(),
+                ResourceUtils.getURL("classpath:").getPath()+"/img/paobu.jpg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "jpeg", baos);
+        baos.flush();
+        byte[] imageInByte = baos.toByteArray();
+        baos.close();
+
+        return imageInByte;
     }
 }

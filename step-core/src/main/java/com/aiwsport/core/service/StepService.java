@@ -22,7 +22,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yangjian9 on 2018/9/10.
@@ -116,35 +118,39 @@ public class StepService {
         return user;
     }
 
-    public Integer decrypt(String encryptedData, String iv, String sessionKey,Integer userId, String token,Integer days){
+    public Map<String, String> decrypt(String encryptedData, String iv, String sessionKey, Integer userId, String token, Integer days){
         int toDayStep = CommonUtil.decrypt(encryptedData, iv, sessionKey, token, days);
 
         if (toDayStep == -1) {
-            return toDayStep;
+            return null;
         }
+
+        Map<String, String> dayStepMap = new HashMap<String, String>();
+        dayStepMap.put("daySumStep", toDayStep+"");
 
         List<StepChangeLog> stepChangeLogs = null;
         try {
-            String aa = DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 00:00:00";
-            String bb = DataTypeUtils.formatCurDateTime();
             stepChangeLogs = stepChangeLogMapper.selectAByUserIdToday(userId, DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 00:00:00", DataTypeUtils.formatCurDateTime());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (stepChangeLogs == null) {
-            return toDayStep;
+            dayStepMap.put("toDayStep", toDayStep+"");
+            return dayStepMap;
         }
 
         if (stepChangeLogs.size() < 1) {
-            return toDayStep;
+            dayStepMap.put("toDayStep", toDayStep+"");
+            return dayStepMap;
         }
 
         for (StepChangeLog stepChangeLog : stepChangeLogs) {
             toDayStep = toDayStep - stepChangeLog.getStepnum();
         }
 
-        return toDayStep;
+        dayStepMap.put("toDayStep", toDayStep+"");
+        return dayStepMap;
     }
 
 
@@ -472,4 +478,5 @@ public class StepService {
         int isSuccess = activedataMapper.updateByPrimaryKey(activedata);
         return isSuccess;
     }
+
 }
