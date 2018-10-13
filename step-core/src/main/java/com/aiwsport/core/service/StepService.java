@@ -288,6 +288,12 @@ public class StepService {
 
     @Transactional
     public ResultMsg createActive(String userId, String type) throws Exception{
+        String nowTimeyyyy_mm_dd = DataTypeUtils.formatCurDateTime_yyyy_mm_dd();
+        boolean flag = DataTypeUtils.hourMinuteBetween(DataTypeUtils.formatCurDateTime(), nowTimeyyyy_mm_dd+" 22:00:00", nowTimeyyyy_mm_dd+" 23:59:59");
+        if (flag) {// 时间段内不能报名
+            return new ResultMsg("createActiveError", "请在每天的22点之前参与报名");
+        }
+
         User user = userMapper.selectByPrimaryKey(Integer.parseInt(userId));
         Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), type);
         if (activestep != null) {
@@ -361,9 +367,25 @@ public class StepService {
     }
 
     public int isJoinActive(String userId, String type) throws Exception{
+        String nowTimeyyyy_mm_dd = DataTypeUtils.formatCurDateTime_yyyy_mm_dd();
+        boolean flag = DataTypeUtils.hourMinuteBetween(DataTypeUtils.formatCurDateTime(), nowTimeyyyy_mm_dd+" 22:00:00", nowTimeyyyy_mm_dd+" 23:59:59");
+        if (flag) {// 时间段内不能报名
+            return 4;
+        }
+
         Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), type);
-        if (activestep == null || !activestep.getType().contains(type)) {
+        if (activestep == null || !type.equals(activestep.getType())) {
             return 0;
+        }
+
+        if ("5".equals(type)) {// 早起挑战赛
+            boolean flag1 = DataTypeUtils.hourMinuteBetween(DataTypeUtils.formatCurDateTime(), nowTimeyyyy_mm_dd+" 04:00:00", nowTimeyyyy_mm_dd+" 06:00:00");
+            if (flag1) {
+                Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
+                if ("0".equals(activedata.getIssign())) {
+                    return 3;
+                }
+            }
         }
 
         return 1;
@@ -436,5 +458,18 @@ public class StepService {
     public List<Activestep> getActiveInfo(String type) throws Exception{
         List<Activestep> activesteps = activestepMapper.selectByType(type);
         return activesteps;
+    }
+
+    public int doSign(Integer userId) throws Exception{
+        boolean flag = DataTypeUtils.hourMinuteBetween(DataTypeUtils.formatCurDateTime(), DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 04:00:00", DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 06:00:00");
+        if (!flag) {
+            return 2;
+        }
+
+        Activestep activestep = activestepMapper.selectByUserIdAndType(userId, "5");
+        Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
+        activedata.setIssign("1");
+        int isSuccess = activedataMapper.updateByPrimaryKey(activedata);
+        return isSuccess;
     }
 }

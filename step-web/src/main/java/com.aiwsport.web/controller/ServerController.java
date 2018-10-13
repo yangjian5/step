@@ -45,7 +45,7 @@ public class ServerController {
     public String onlogin(@ParamVerify(isNotBlank = true)String code, String province,
                           String avatarUrl, String nickName, String country, String city, String gender) {
         String appid = "wx169ddfe67114165d";
-        String secret = "a9cb222c3a61f6ec58376d6c2853b015";
+        String secret = "e26e1b29d8fc04e461d3277c919100aa";
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appid + "&secret=" + secret + "&js_code=";
         String url0 = "&grant_type=authorization_code";
         String userInfo = "";
@@ -230,6 +230,19 @@ public class ServerController {
         return new ResultMsg("getActiveInfoOk", jsonObject);
     }
 
+    @RequestMapping("/step/do_sign.json")
+    public ResultMsg doSign(String userId) throws Exception{
+        int isScuess = stepService.doSign(Integer.parseInt(userId));
+        if (isScuess == 0) {
+            return new ResultMsg(false, 403,"打卡失败请重试,或联系客服");
+        }
+
+        if (isScuess == 2) {
+            return new ResultMsg(false, 403,"已经打卡,奖励随后发放");
+        }
+
+        return new ResultMsg("doSignOk", "打卡成功");
+    }
 
     @RequestMapping("/test.json")
     public ResultMsg test() throws Exception{

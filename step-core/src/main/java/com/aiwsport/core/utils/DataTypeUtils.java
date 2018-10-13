@@ -930,4 +930,35 @@ public final class DataTypeUtils {
 		re.append("]");
 		return re.toString();
 	}
+
+	/**
+	 *
+	 * @param nowDate   要比较的时间
+	 * @param startDate   开始时间
+	 * @param endDate   结束时间
+	 * @return   true在时间段内，false不在时间段内
+	 * @throws Exception
+	 */
+	public static boolean hourMinuteBetween(String nowDate, String startDate, String endDate) throws Exception{
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		Date now = format.parse(nowDate);
+		Date start = format.parse(startDate);
+		Date end = format.parse(endDate);
+
+		long nowTime = now.getTime();
+		long startTime = start.getTime();
+		long endTime = end.getTime();
+
+		return nowTime >= startTime && nowTime <= endTime;
+	}
+
+	public static void main(String[] args){
+		try {
+			System.out.println(hourMinuteBetween("2018-10-13 05:53:00", "2018-10-13 04:00:00", "2018-10-13 06:00:00"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
