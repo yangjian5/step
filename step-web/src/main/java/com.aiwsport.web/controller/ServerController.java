@@ -260,31 +260,23 @@ public class ServerController {
         return new ResultMsg("服务启动成功", 9276);
     }
 
-//    @RequestMapping("/build_img.json")
-//    public ResultMsg buildImg() throws Exception{
-//        BufferedImage d = ImageUtils.buildImg("杨建48993步",
-//                "https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83epnRkt8ueSLqcIUPr7XKaNwmn3y0OvoyFjaNRXwByvtKeZ1JlCdCbuqrELauJflWuPkvVcF7s48Bw/132",
-//                "/Users/yangjian9/Desktop/data.png");
-//        return new ResultMsg("buildImgOK", d);
+//    @RequestMapping(value = "/build_img.json",produces = MediaType.IMAGE_JPEG_VALUE)
+//    @ResponseBody
+//    public byte[] getImage(Integer daySumStep, String userId) throws Exception {
+//        if ("0".equals(userId)) {
+//            return null;
+//        }
+//
+//        User user = stepService.getUser(userId);
+//        BufferedImage bufferedImage = ImageUtils.buildImg(user.getNickname()+" 今日行走 "+daySumStep+" 步",
+//                user.getAvatarurl(),
+//                ResourceUtils.getURL("classpath:").getPath()+"/img/paobu.jpg");
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        ImageIO.write(bufferedImage, "jpeg", baos);
+//        baos.flush();
+//        byte[] imageInByte = baos.toByteArray();
+//        baos.close();
+//
+//        return imageInByte;
 //    }
-
-    @RequestMapping(value = "/build_img.json",produces = MediaType.IMAGE_JPEG_VALUE)
-    @ResponseBody
-    public byte[] getImage(Integer daySumStep, String userId) throws Exception {
-        if ("0".equals(userId)) {
-            return null;
-        }
-
-        User user = stepService.getUser(userId);
-        BufferedImage bufferedImage = ImageUtils.buildImg(user.getNickname()+" 今日行走 "+daySumStep+" 步",
-                user.getAvatarurl(),
-                ResourceUtils.getURL("classpath:").getPath()+"/img/paobu.jpg");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "jpeg", baos);
-        baos.flush();
-        byte[] imageInByte = baos.toByteArray();
-        baos.close();
-
-        return imageInByte;
-    }
 }
