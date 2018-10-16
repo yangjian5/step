@@ -82,10 +82,16 @@ public class StepService {
         return user;
     }
 
-    public User changeCoin(String step, String openId, String userId) throws Exception{
+    public User changeCoin(String step, String jiaChenStep, String rewardStep, String openId, String userId) throws Exception{
         User user = userMapper.getByOpenId(openId);
 
-        BigDecimal newCoinNum = BigDecimal.valueOf(Integer.parseInt(step)).multiply(BigDecimal.valueOf(0.0005));
+        int step1 = Integer.parseInt(step);
+        int jiaChenStep1 = Integer.parseInt(jiaChenStep);
+        int rewardStep1 = Integer.parseInt(rewardStep);
+
+        int sumStep = step1 + jiaChenStep1 + rewardStep1;
+
+        BigDecimal newCoinNum = BigDecimal.valueOf(sumStep).multiply(BigDecimal.valueOf(0.0005));
 
         BigDecimal sumCoin = newCoinNum.add(BigDecimal.valueOf(user.getCoinnum()));
 
@@ -97,7 +103,9 @@ public class StepService {
         StepChangeLog stepChangeLog = new StepChangeLog();
         stepChangeLog.setUserid(Integer.parseInt(userId));
         stepChangeLog.setCoinnum(sumCoinResult);
-        stepChangeLog.setStepnum(Integer.parseInt(step));
+        stepChangeLog.setStepnum(step1);
+        stepChangeLog.setJiachenstep(jiaChenStep1);
+        stepChangeLog.setRewardstep(rewardStep1);
         stepChangeLog.setCreatetime(DataTypeUtils.formatCurDateTime());
         stepChangeLogMapper.insert(stepChangeLog);
 
@@ -543,7 +551,7 @@ public class StepService {
         List<String> userUrls = new ArrayList<String>();
         for (int i=0; i<4; i++) {
             if (shares.size()-1 < i) {
-                userUrls.add("");
+                userUrls.add("/image/touxiang.png");
             } else {
                 Share share = shares.get(i);
                 User user = userMapper.selectByPrimaryKey(share.getSuserid());

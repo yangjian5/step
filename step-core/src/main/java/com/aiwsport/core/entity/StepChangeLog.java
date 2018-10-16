@@ -8,6 +8,10 @@ public class StepChangeLog {
 
     private Integer stepnum;
 
+    private Integer jiachenstep;
+
+    private Integer rewardstep;
+
     private double coinnum;
 
     private String createtime;
@@ -50,5 +54,21 @@ public class StepChangeLog {
 
     public void setCreatetime(String createtime) {
         this.createtime = createtime;
+    }
+
+    public Integer getJiachenstep() {
+        return jiachenstep;
+    }
+
+    public void setJiachenstep(Integer jiachenstep) {
+        this.jiachenstep = jiachenstep;
+    }
+
+    public Integer getRewardstep() {
+        return rewardstep;
+    }
+
+    public void setRewardstep(Integer rewardstep) {
+        this.rewardstep = rewardstep;
     }
 }

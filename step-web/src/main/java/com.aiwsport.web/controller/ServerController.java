@@ -91,9 +91,11 @@ public class ServerController {
 
     @RequestMapping("/step/change_coin.json")
     public String changeCoin(@ParamVerify(isNotBlank = true, isNumber = true) String step,
+                             @ParamVerify(isNotBlank = true, isNumber = true) String jiaChenStep,
+                             @ParamVerify(isNotBlank = true, isNumber = true) String rewardStep,
                              @ParamVerify(isNotBlank = true) String openId,
                              @ParamVerify(isNotBlank = true, isNumber = true) String userId) throws Exception{
-        User user = stepService.changeCoin(step, openId, userId);
+        User user = stepService.changeCoin(step, jiaChenStep, rewardStep, openId, userId);
         return JSONObject.toJSONString(user);
     }
 

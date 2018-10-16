@@ -5,6 +5,8 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="userId" property="userid" jdbcType="INTEGER" />
     <result column="stepNum" property="stepnum" jdbcType="INTEGER" />
+    <result column="jiaChenStep" property="jiachenstep" jdbcType="INTEGER" />
+    <result column="rewardStep" property="rewardstep" jdbcType="INTEGER" />
     <result column="coinNum" property="coinnum" jdbcType="DOUBLE" />
     <result column="createTime" property="createtime" jdbcType="VARCHAR" />
   </resultMap>
@@ -16,30 +18,32 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into step_change_log (userId, stepNum, coinNum, 
+    insert into step_change_log (userId, stepNum, jiaChenStep, rewardStep, coinNum,
       createTime)
-    values (#{userid,jdbcType=INTEGER}, #{stepnum,jdbcType=INTEGER}, #{coinnum,jdbcType=DOUBLE},
+    values (#{userid,jdbcType=INTEGER}, #{stepnum,jdbcType=INTEGER}, #{jiachenstep,jdbcType=INTEGER}, #{rewardsteps,jdbcType=INTEGER}, #{coinnum,jdbcType=DOUBLE},
       #{createtime,jdbcType=DATE})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.StepChangeLog" >
     update step_change_log
     set userId = #{userid,jdbcType=INTEGER},
       stepNum = #{stepnum,jdbcType=INTEGER},
+      jiaChenStep = #{jiachenstep,jdbcType=INTEGER},
+      rewardStep = #{rewardstep,jdbcType=INTEGER},
       coinNum = #{coinnum,jdbcType=DOUBLE},
       createTime = #{createtime,jdbcType=DATE}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, stepNum, coinNum, createTime
+    select id, userId, stepNum, jiaChenStep, rewardStep, coinNum, createTime
     from step_change_log
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, userId, stepNum, coinNum, createTime
+    select id, userId, stepNum, jiaChenStep, rewardStep, coinNum, createTime
     from step_change_log
   </select>
   <select id="selectAByUserIdToday" resultMap="BaseResultMap">
-    select id, userId, stepNum, coinNum, createTime
+    select id, userId, stepNum, jiaChenStep, rewardStep, coinNum, createTime
     from step_change_log
     where userId = #{arg0} AND (createTime BETWEEN #{arg1} AND #{arg2})
   </select>
