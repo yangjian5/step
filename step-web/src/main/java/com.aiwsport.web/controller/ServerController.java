@@ -272,6 +272,12 @@ public class ServerController {
         return new ResultMsg("addShareOk", "好友邀请成功");
     }
 
+    @RequestMapping("/step/get_share_user.json")
+    public ResultMsg getShareUser(Integer mUserId) throws Exception{
+        List<String> userUrls = stepService.getShareUsersByMuserId(mUserId);
+        return new ResultMsg("getShareUserOk", userUrls);
+    }
+
     @RequestMapping("/test.json")
     public ResultMsg test() throws Exception{
         return new ResultMsg("服务启动成功", 9276);

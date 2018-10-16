@@ -171,7 +171,7 @@ public class StepService {
             BigDecimal JiaChenStep = JiaChen.multiply(BigDecimal.valueOf(toDayStep));
 
             dayStepMap.put("JiaChen", JiaChen.doubleValue()+"");
-            dayStepMap.put("JiaChenStep", JiaChenStep.doubleValue()+"");
+            dayStepMap.put("JiaChenStep", ((int)JiaChenStep.doubleValue())+"");
         }
 
         // 奖励步数
@@ -537,4 +537,20 @@ public class StepService {
     public List<Share> getSharesByMuserId(Integer muserId) throws Exception{
         return shareMapper.selectByMuser(muserId);
     }
+
+    public List<String> getShareUsersByMuserId(Integer muserId) throws Exception{
+        List<Share> shares = shareMapper.selectByMuser(muserId);
+        List<String> userUrls = new ArrayList<String>();
+        for (int i=0; i<4; i++) {
+            if (shares.size()-1 < i) {
+                userUrls.add("");
+            } else {
+                Share share = shares.get(i);
+                User user = userMapper.selectByPrimaryKey(share.getSuserid());
+                userUrls.add(user.getAvatarurl());
+            }
+        }
+        return userUrls;
+    }
+
 }
