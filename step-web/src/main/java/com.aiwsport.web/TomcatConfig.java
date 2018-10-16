@@ -20,6 +20,8 @@ public class TomcatConfig {
     private String port;
     @Value("${spring.server.acceptorThreadCount}")
     private String acceptorThreadCount;
+    @Value("${spring.server.acceptCount}")
+    private String acceptCount;
     @Value("${spring.server.minSpareThreads}")
     private String minSpareThreads;
     @Value("${spring.server.maxSpareThreads}")
@@ -64,6 +66,7 @@ public class TomcatConfig {
             connector.setPort(Integer.valueOf(port));
             connector.setAttribute("connectionTimeout", connectionTimeout);
             connector.setAttribute("acceptorThreadCount", acceptorThreadCount);
+            connector.setAttribute("acceptCount", acceptCount);
             connector.setAttribute("minSpareThreads", minSpareThreads);
             connector.setAttribute("maxSpareThreads", maxSpareThreads);
             connector.setAttribute("maxThreads", maxThreads);
