@@ -102,7 +102,7 @@ public class StepService {
 
         StepChangeLog stepChangeLog = new StepChangeLog();
         stepChangeLog.setUserid(Integer.parseInt(userId));
-        stepChangeLog.setCoinnum(sumCoinResult);
+        stepChangeLog.setCoinnum(newCoinNum.doubleValue());
         stepChangeLog.setStepnum(step1);
         stepChangeLog.setJiachenstep(jiaChenStep1);
         stepChangeLog.setRewardstep(rewardStep1);

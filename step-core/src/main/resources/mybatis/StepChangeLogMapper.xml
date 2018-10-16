@@ -20,7 +20,7 @@
     </selectKey>
     insert into step_change_log (userId, stepNum, jiaChenStep, rewardStep, coinNum,
       createTime)
-    values (#{userid,jdbcType=INTEGER}, #{stepnum,jdbcType=INTEGER}, #{jiachenstep,jdbcType=INTEGER}, #{rewardsteps,jdbcType=INTEGER}, #{coinnum,jdbcType=DOUBLE},
+    values (#{userid,jdbcType=INTEGER}, #{stepnum,jdbcType=INTEGER}, #{jiachenstep,jdbcType=INTEGER}, #{rewardstep,jdbcType=INTEGER}, #{coinnum,jdbcType=DOUBLE},
       #{createtime,jdbcType=DATE})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.StepChangeLog" >
