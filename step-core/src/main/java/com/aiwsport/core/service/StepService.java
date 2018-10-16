@@ -555,7 +555,11 @@ public class StepService {
             } else {
                 Share share = shares.get(i);
                 User user = userMapper.selectByPrimaryKey(share.getSuserid());
-                userUrls.add(user.getAvatarurl());
+                if (user == null) {
+                    userUrls.add("/image/touxiang.png");
+                } else {
+                    userUrls.add(user.getAvatarurl());
+                }
             }
         }
         return userUrls;
