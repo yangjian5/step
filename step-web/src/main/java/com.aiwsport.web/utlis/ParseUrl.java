@@ -18,15 +18,15 @@ public class ParseUrl {
     static HttpClient httpClient;
 
     static {
-        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
         HttpClientParams httpClientParams = new HttpClientParams();
         httpClientParams.setConnectionManagerTimeout(2000);
-        httpClient = new HttpClient(httpClientParams, connectionManager);
-
+        MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
         HttpConnectionManagerParams params = connectionManager.getParams();
         params.setDefaultMaxConnectionsPerHost(100);
-        params.setConnectionTimeout(5000);
-        params.setSoTimeout(3000);
+        params.setMaxTotalConnections(100);
+        params.setConnectionTimeout(3000);
+        params.setSoTimeout(2000);
+        httpClient = new HttpClient(httpClientParams, connectionManager);
     }
 
     private static Logger logger = LogManager.getLogger();
@@ -39,7 +39,7 @@ public class ParseUrl {
      */
     public static String getDataFromUrl(String url) {
         HttpMethod httpMethod = new GetMethod(url);
-//        long beginTime = System.currentTimeMillis();
+        long beginTime = System.currentTimeMillis();
         int status = 0;
         try {
             status = httpClient.executeMethod(httpMethod);
@@ -56,17 +56,17 @@ public class ParseUrl {
             }
         } catch (ConnectTimeoutException e) {
             status = 1;
-//            ApiLogger.error(new StringBuilder(128).append("getDataFromUrl ").append(url).append(" occurs ConnectTimeoutException"), e);
+            logger.error(new StringBuilder(128).append("getDataFromUrl ").append(url).append(" occurs ConnectTimeoutException"), e);
         } catch (IOException e) {
-//            ApiLogger.error(new StringBuilder(128).append("getDataFromUrl ").append(url).append(" occurs IOException"), e);
+            logger.error(new StringBuilder(128).append("getDataFromUrl ").append(url).append(" occurs IOException"), e);
         } finally {
             httpMethod.releaseConnection();
         }
 
-//        long endTime = System.currentTimeMillis();
-//        if ((endTime - beginTime) > 250) {
-////            ApiLogger.warn(new StringBuilder(128).append("get message from url ").append(url).append(" too slow,it costs ").append((endTime - beginTime)).append(" ms"));
-//        }
+        long endTime = System.currentTimeMillis();
+        if ((endTime - beginTime) > 70) {
+            logger.warn(new StringBuilder(128).append("get message from url ").append(url).append(" too slow,it costs ").append((endTime - beginTime)).append(" ms"));
+        }
         return "";
     }
 

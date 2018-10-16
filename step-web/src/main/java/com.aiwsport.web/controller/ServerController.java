@@ -8,6 +8,7 @@ import com.aiwsport.core.service.StepService;
 import com.aiwsport.web.utlis.AES;
 import com.aiwsport.web.utlis.HttpRequestor;
 import com.aiwsport.web.utlis.ImageUtils;
+import com.aiwsport.web.utlis.ParseUrl;
 import com.aiwsport.web.verify.ParamObjVerify;
 import com.aiwsport.web.verify.ParamVerify;
 import com.alibaba.fastjson.JSONArray;
@@ -52,17 +53,19 @@ public class ServerController {
     private static Logger logger = LogManager.getLogger();
 
     @RequestMapping(value = "/onlogin.json")
-    public String onlogin(@ParamVerify(isNotBlank = true)String code, String province,
+    public JSONObject onlogin(@ParamVerify(isNotBlank = true)String code, String province,
                           String avatarUrl, String nickName, String country, String city, String gender) {
-        String appid = "wx169ddfe67114165d";
-        String secret = "e26e1b29d8fc04e461d3277c919100aa";
-        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + appid + "&secret=" + secret + "&js_code=";
-        String url0 = "&grant_type=authorization_code";
+        String url1 = "https://api.weixin.qq.com/sns/jscode2session?appid=wx169ddfe67114165d&secret=e26e1b29d8fc04e461d3277c919100aa&js_code=";
+        String url2 = "&grant_type=authorization_code";
         String userInfo = "";
         JSONObject jsonObject = null;
         try {
-            userInfo = new HttpRequestor().doGet(url+code+url0);    //url+code+url0
-            System.out.println(userInfo);
+            long start = System.currentTimeMillis();
+//            userInfo = new HttpRequestor().doGet(url1+code+url2);
+            userInfo = ParseUrl.getDataFromUrl((url1+code+url2));
+            System.out.println("------userInfo------" + userInfo);
+            long end = System.currentTimeMillis();
+            System.out.println("------cost------" + (end-start));
             jsonObject = JSONObject.parseObject(userInfo);
             nickName = nickName.replaceAll("[^\\u0000-\\uFFFF]", "?");
             User user = stepService.login(jsonObject, province, avatarUrl, nickName, country, city, gender);
@@ -71,7 +74,7 @@ public class ServerController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return JSONObject.toJSONString(jsonObject);
+        return jsonObject;
     }
 
     @RequestMapping("/step/decrypt.json")
@@ -253,6 +256,20 @@ public class ServerController {
         }
 
         return new ResultMsg("doSignOk", "打卡成功");
+    }
+
+    @RequestMapping("/step/add_share.json")
+    public ResultMsg addShare(Integer mUserId, Integer sUserId) throws Exception{
+        if (mUserId == sUserId) {
+            return new ResultMsg(false, 403,"不能邀请自己");
+        }
+
+        int isScuess = stepService.addShare(mUserId, sUserId);
+        if (isScuess == 0) {
+            return new ResultMsg(false, 403,"好友加成失败请重试,或联系客服");
+        }
+
+        return new ResultMsg("addShareOk", "好友邀请成功");
     }
 
     @RequestMapping("/test.json")

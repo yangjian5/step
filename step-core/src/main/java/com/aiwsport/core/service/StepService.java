@@ -56,6 +56,9 @@ public class StepService {
     @Autowired
     private ActivedataMapper activedataMapper;
 
+    @Autowired
+    private ShareMapper shareMapper ;
+
     private static Logger logger = LogManager.getLogger();
 
     public User login(JSONObject userInfo, String province,
@@ -81,20 +84,19 @@ public class StepService {
 
     public User changeCoin(String step, String openId, String userId) throws Exception{
         User user = userMapper.getByOpenId(openId);
-        double newCoinNum = Integer.parseInt(step) * 0.0005;
 
-        double sumCoin = newCoinNum + user.getCoinnum();
+        BigDecimal newCoinNum = BigDecimal.valueOf(Integer.parseInt(step)).multiply(BigDecimal.valueOf(0.0005));
 
-        BigDecimal b = new BigDecimal(sumCoin);
+        BigDecimal sumCoin = newCoinNum.add(BigDecimal.valueOf(user.getCoinnum()));
 
-        sumCoin = b.setScale(4,  RoundingMode.HALF_UP).doubleValue();
+        double sumCoinResult = sumCoin.setScale(4,  RoundingMode.HALF_UP).doubleValue();
 
-        user.setCoinnum(sumCoin);
+        user.setCoinnum(sumCoinResult);
         userMapper.updateByPrimaryKey(user);
 
         StepChangeLog stepChangeLog = new StepChangeLog();
         stepChangeLog.setUserid(Integer.parseInt(userId));
-        stepChangeLog.setCoinnum(newCoinNum);
+        stepChangeLog.setCoinnum(sumCoinResult);
         stepChangeLog.setStepnum(Integer.parseInt(step));
         stepChangeLog.setCreatetime(DataTypeUtils.formatCurDateTime());
         stepChangeLogMapper.insert(stepChangeLog);
@@ -137,11 +139,13 @@ public class StepService {
 
         if (stepChangeLogs == null) {
             dayStepMap.put("toDayStep", toDayStep+"");
+            buildStep(userId, dayStepMap, toDayStep);
             return dayStepMap;
         }
 
         if (stepChangeLogs.size() < 1) {
             dayStepMap.put("toDayStep", toDayStep+"");
+            buildStep(userId, dayStepMap, toDayStep);
             return dayStepMap;
         }
 
@@ -150,7 +154,39 @@ public class StepService {
         }
 
         dayStepMap.put("toDayStep", toDayStep+"");
+        buildStep(userId, dayStepMap, toDayStep);
         return dayStepMap;
+    }
+
+    private void buildStep (Integer mUserId, Map<String, String> dayStepMap, int toDayStep) {
+        List<Share> JiaChenShares =  shareMapper.selectByMuser(mUserId);
+        if (JiaChenShares == null) {
+            dayStepMap.put("JiaChen", "0");
+            dayStepMap.put("JiaChenStep", "0");
+        } else {
+            int count = JiaChenShares.size();
+
+            BigDecimal JiaChen = BigDecimal.valueOf(0.02).multiply(BigDecimal.valueOf(count));
+
+            BigDecimal JiaChenStep = JiaChen.multiply(BigDecimal.valueOf(toDayStep));
+
+            dayStepMap.put("JiaChen", JiaChen.doubleValue()+"");
+            dayStepMap.put("JiaChenStep", JiaChenStep.doubleValue()+"");
+        }
+
+        // 奖励步数
+        List<Share> addRewardShares = shareMapper.selectByMuserAndIsAddReward(mUserId);
+        if (addRewardShares == null) {
+            dayStepMap.put("rewardStep", "0");
+        } else {
+            dayStepMap.put("rewardStep", addRewardShares.size()*3000+"");
+        }
+
+        // 删除首次奖励
+        for (Share addRewardShare : addRewardShares) {
+            addRewardShare.setIsaddreward("0");
+            shareMapper.updateByPrimaryKey(addRewardShare);
+        }
     }
 
 
@@ -270,10 +306,8 @@ public class StepService {
             goodsMapper.updateByPrimaryKey(goods);
 
             // 扣减币数
-            double surplus = user.getCoinnum()-goods.getSalecoin();
-            BigDecimal b = new BigDecimal(surplus);
-            surplus = b.setScale(4,  RoundingMode.HALF_UP).doubleValue();
-
+            BigDecimal surplusCoin = BigDecimal.valueOf(user.getCoinnum()).subtract(BigDecimal.valueOf(goods.getSalecoin()));
+            double surplus = surplusCoin.setScale(4,  RoundingMode.HALF_UP).doubleValue();
             user.setCoinnum(surplus);
             userMapper.updateByPrimaryKey(user);
 
@@ -311,40 +345,41 @@ public class StepService {
                 if (user.getCoinnum() < 30) {
                    return new ResultMsg("createActiveError", "能量不足");
                 }
-                double surplus = user.getCoinnum()-30;
-                BigDecimal b = new BigDecimal(surplus);
-                surplus = b.setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                BigDecimal surplusCoin = BigDecimal.valueOf(user.getCoinnum()).subtract(BigDecimal.valueOf(30));
+                double surplus = surplusCoin.setScale(4,  RoundingMode.HALF_UP).doubleValue();
                 user.setCoinnum(surplus);
                 break;
             case "2":// 15000步
                 if (user.getCoinnum() < 50) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                double surplus1 = new BigDecimal(user.getCoinnum()-50).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                BigDecimal surplusCoin1 = BigDecimal.valueOf(user.getCoinnum()).subtract(BigDecimal.valueOf(50));
+                double surplus1 = surplusCoin1.setScale(4,  RoundingMode.HALF_UP).doubleValue();
                 user.setCoinnum(surplus1);
                 break;
             case "3":// 20000步
                 if (user.getCoinnum() < 70) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                double surplus2 = new BigDecimal(user.getCoinnum()-70).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                BigDecimal surplusCoin2 = BigDecimal.valueOf(user.getCoinnum()).subtract(BigDecimal.valueOf(70));
+                double surplus2 = surplusCoin2.setScale(4,  RoundingMode.HALF_UP).doubleValue();
                 user.setCoinnum(surplus2);
                 break;
             case "4":// 全区
                 if (user.getCoinnum() < 10) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                double surplus3 = new BigDecimal(user.getCoinnum()-10).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                BigDecimal surplusCoin3 = BigDecimal.valueOf(user.getCoinnum()).subtract(BigDecimal.valueOf(10));
+                double surplus3 = surplusCoin3.setScale(4,  RoundingMode.HALF_UP).doubleValue();
                 user.setCoinnum(surplus3);
-                user.setCoinnum(user.getCoinnum()-10);
                 break;
             case "5":// 早起
                 if (user.getCoinnum() < 10) {
                     return new ResultMsg("createActiveError", "能量不足");
                 }
-                double surplus4 = new BigDecimal(user.getCoinnum()-10).setScale(4,  RoundingMode.HALF_UP).doubleValue();
+                BigDecimal surplusCoin4 = BigDecimal.valueOf(user.getCoinnum()).subtract(BigDecimal.valueOf(10));
+                double surplus4 = surplusCoin4.setScale(4,  RoundingMode.HALF_UP).doubleValue();
                 user.setCoinnum(surplus4);
-                user.setCoinnum(user.getCoinnum()-10);
                 break;
             default:
                 break;
@@ -479,4 +514,27 @@ public class StepService {
         return isSuccess;
     }
 
+    public int addShare(Integer muserId, Integer suserId) throws Exception{
+        int isSuccess = 0;
+        Share share = shareMapper.selectBySuser(suserId);
+        if (share != null) {
+            return isSuccess;
+        }
+
+        Share addShare = new Share();
+        addShare.setMuserid(muserId);
+        addShare.setSuserid(suserId);
+        addShare.setIsaddreward("1");
+        addShare.setCreatetime(DataTypeUtils.formatCurDateTime());
+        isSuccess = shareMapper.insert(addShare);
+        return isSuccess;
+    }
+
+    public List<Share> getSharesByIsAddReward(Integer muserId) throws Exception{
+        return shareMapper.selectByMuserAndIsAddReward(muserId);
+    }
+
+    public List<Share> getSharesByMuserId(Integer muserId) throws Exception{
+        return shareMapper.selectByMuser(muserId);
+    }
 }
