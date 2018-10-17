@@ -178,8 +178,8 @@ public class StepService {
 
             BigDecimal JiaChenStep = JiaChen.multiply(BigDecimal.valueOf(toDayStep));
 
-            dayStepMap.put("JiaChen", JiaChen.doubleValue()+"");
-            dayStepMap.put("JiaChenStep", ((int)JiaChenStep.doubleValue())+"");
+            dayStepMap.put("JiaChen", JiaChen.multiply(BigDecimal.valueOf(100)).intValue()+"");
+            dayStepMap.put("JiaChenStep", JiaChenStep.intValue()+"");
         }
 
         // 奖励步数
