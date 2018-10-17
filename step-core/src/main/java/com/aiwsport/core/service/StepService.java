@@ -114,13 +114,13 @@ public class StepService {
             for (Activestep activestep : activesteps) {
                 Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
                 if ("4".equals(activestep.getType())) {
-                    activedata.setSumstep(activedata.getSumstep()+Integer.parseInt(step));
-                    activestepMapper.updateByPrimaryKey(activestep);
+                    activedata.setSumstep(activedata.getSumstep()+sumStep);
+                    activedataMapper.updateByPrimaryKey(activedata);
                 }
 
                 if ("1,2,3".contains(activestep.getType())) {
-                    activedata.setDaystep(activedata.getDaystep()+Integer.parseInt(step));
-                    activestepMapper.updateByPrimaryKey(activestep);
+                    activedata.setDaystep(activedata.getDaystep()+sumStep);
+                    activedataMapper.updateByPrimaryKey(activedata);
                 }
 
             }
