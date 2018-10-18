@@ -57,7 +57,7 @@ public class AccessHandlerInteceptor implements HandlerInterceptor {
     }
 
     protected void commonAuthSign(String paramString,String param_sign,String secret){
-        String sign = DigestUtils.md5Hex(URLEncoder.encode(paramString) + secret);
+        String sign = DigestUtils.md5Hex(URLEncoder.encode(paramString.replaceAll(" ", "")) + secret);
         if (!sign.equals(param_sign)) {
             logger.warn("paramString:" + paramString +
                     ",param sign:" + param_sign + ",sign:" + sign);

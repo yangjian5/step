@@ -11,6 +11,8 @@ public class Address {
 
     private String addressinfo;
 
+    private String cityinfo;
+
     public Integer getId() {
         return id;
     }
@@ -49,5 +51,13 @@ public class Address {
 
     public void setAddressinfo(String addressinfo) {
         this.addressinfo = addressinfo;
+    }
+
+    public String getCityinfo() {
+        return cityinfo;
+    }
+
+    public void setCityinfo(String cityinfo) {
+        this.cityinfo = cityinfo;
     }
 }

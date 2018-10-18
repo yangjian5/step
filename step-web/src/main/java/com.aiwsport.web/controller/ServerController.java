@@ -151,19 +151,25 @@ public class ServerController {
     }
 
     @RequestMapping("/step/save_address.json")
-    public ResultMsg saveAddress(String addressId, @ParamVerify(isNotBlank = true, isNumber = true) String userId, String addressInfo, String telNum, String userName) throws Exception{
+    public ResultMsg saveAddress(String addressId, @ParamVerify(isNotBlank = true, isNumber = true) String userId,
+                                 String addressInfo, String telNum, String userName, String cityInfo) throws Exception{
         int id = 0;
         try{
+            String[] cityInfos = cityInfo.split("-");
+            if (cityInfos == null || cityInfos.length != 3) {
+                new ResultMsg("saveAddressOk", "系统异常,请检查地址的省市信息~");
+            }
+
             if (StringUtils.isNotBlank(addressId)) {
-                id = stepService.updateAddress(addressId, userId, addressInfo, telNum, userName);
+                id = stepService.updateAddress(addressId, userId, addressInfo, telNum, userName, cityInfo);
             } else {
-                id = stepService.createAddress(userId, addressInfo, telNum, userName);
+                id = stepService.createAddress(userId, addressInfo, telNum, userName, cityInfo);
             }
         } catch (Exception e) {
             logger.error("save_address is error", e);
         }
 
-        return new ResultMsg("保存收货地址成功", id == 0 ? "系统异常,请重试" : id);
+        return new ResultMsg("saveAddressOk", id == 0 ? "系统异常,请检查地址是否含有特殊字符~" : "保存收货地址成功");
     }
 
     @RequestMapping("/step/change_good.json")
@@ -237,6 +243,9 @@ public class ServerController {
                     break;
                 case "4":// 全区
                     reward = activeCount * 10 + 2000;
+                    break;
+                case "5":// 早起
+                    reward = activeCount * 10 + 100;
                     break;
                 default:
                     break;

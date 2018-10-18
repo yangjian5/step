@@ -198,7 +198,7 @@ public class StepService {
     }
 
 
-    public int createAddress(String userId, String addressInfo, String telNum, String userName){
+    public int createAddress(String userId, String addressInfo, String telNum, String userName, String cityInfo){
         Address address = addressMapper.selectByUserId(Integer.parseInt(userId));
         if (address != null) {
             return 0;
@@ -207,6 +207,7 @@ public class StepService {
         Address adderss = new Address();
         adderss.setUserid(Integer.parseInt(userId));
         adderss.setAddressinfo(addressInfo);
+        adderss.setCityinfo(cityInfo);
         adderss.setTelnum(telNum);
         adderss.setUsername(userName);
         return addressMapper.insert(adderss);
@@ -279,11 +280,12 @@ public class StepService {
         return queryGoodChangeShows;
     }
 
-    public int updateAddress(String addressId, String userId, String addressInfo, String telNum, String userName){
+    public int updateAddress(String addressId, String userId, String addressInfo, String telNum, String userName, String cityInfo){
         Address adderss = new Address();
         adderss.setId(Integer.parseInt(addressId));
         adderss.setUserid(Integer.parseInt(userId));
         adderss.setAddressinfo(addressInfo);
+        adderss.setCityinfo(cityInfo);
         adderss.setTelnum(telNum);
         adderss.setUsername(userName);
         return addressMapper.updateByPrimaryKey(adderss);

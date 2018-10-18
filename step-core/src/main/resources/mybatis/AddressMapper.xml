@@ -6,6 +6,7 @@
     <result column="userId" property="userid" jdbcType="INTEGER" />
     <result column="userName" property="username" jdbcType="VARCHAR" />
     <result column="telNum" property="telnum" jdbcType="VARCHAR" />
+    <result column="cityInfo" property="cityinfo" jdbcType="VARCHAR" />
     <result column="addressInfo" property="addressinfo" jdbcType="VARCHAR" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
@@ -16,31 +17,32 @@
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into address (userId, userName, telNum, 
+    insert into address (userId, userName, telNum, cityinfo,
       addressInfo)
-    values (#{userid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{telnum,jdbcType=VARCHAR}, 
-      #{addressinfo,jdbcType=VARCHAR})
+    values (#{userid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{telnum,jdbcType=VARCHAR}, #{cityinfo,jdbcType=VARCHAR},
+    #{addressinfo,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Address" >
     update address
     set userId = #{userid,jdbcType=INTEGER},
       userName = #{username,jdbcType=VARCHAR},
       telNum = #{telnum,jdbcType=VARCHAR},
-      addressInfo = #{addressinfo,jdbcType=VARCHAR}
+      telNum = #{telnum,jdbcType=VARCHAR},
+      cityinfo = #{cityinfo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, userName, telNum, addressInfo
+    select id, userId, userName, telNum, cityinfo, addressInfo
     from address
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, userName, telNum, addressInfo
+    select id, userId, userName, telNum, cityinfo, addressInfo
     from address
     where userId = #{userId,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, userId, userName, telNum, addressInfo
+    select id, userId, userName, telNum, cityinfo, addressInfo
     from address
   </select>
 </mapper>
