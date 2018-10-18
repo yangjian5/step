@@ -13,6 +13,8 @@ public class GoodChangeLog {
 
     private String status;
 
+    private String kdnum;
+
     public Integer getId() {
         return id;
     }
@@ -51,5 +53,13 @@ public class GoodChangeLog {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getKdnum() {
+        return kdnum;
+    }
+
+    public void setKdnum(String kdnum) {
+        this.kdnum = kdnum;
     }
 }

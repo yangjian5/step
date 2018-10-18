@@ -7,6 +7,7 @@
     <result column="goodId" property="goodid" jdbcType="INTEGER" />
     <result column="createTime" property="createtime" jdbcType="DATE" />
     <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="kdNum" property="kdnum" jdbcType="VARCHAR" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from good_change_log
@@ -17,33 +18,34 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into good_change_log (userId, goodId, createTime, 
-      status)
+      status,kdnum)
     values (#{userid,jdbcType=INTEGER}, #{goodid,jdbcType=INTEGER}, #{createtime,jdbcType=DATE}, 
-      #{status,jdbcType=VARCHAR})
+      #{status,jdbcType=VARCHAR}, #{kdnum,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.GoodChangeLog" >
     update good_change_log
     set userId = #{userid,jdbcType=INTEGER},
       goodId = #{goodid,jdbcType=INTEGER},
       createTime = #{createtime,jdbcType=DATE},
-      status = #{status,jdbcType=VARCHAR}
+      status = #{status,jdbcType=VARCHAR},
+      kdnum = #{kdnum,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, goodId, createTime, status
+    select id, userId, goodId, createTime, status, kdnum
     from good_change_log
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, userId, goodId, createTime, status
+    select id, userId, goodId, createTime, status, kdnum
     from good_change_log
   </select>
   <select id="selectByGoodId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-    select id, userId, goodId, createTime, status
+    select id, userId, goodId, createTime, status, kdnum
     from good_change_log where goodId = #{goodId,jdbcType=INTEGER}
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-    select id, userId, goodId, createTime, status
+    select id, userId, goodId, createTime, status, kdnum
     from good_change_log where userId = #{userId,jdbcType=INTEGER}
   </select>
 </mapper>
