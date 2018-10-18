@@ -155,11 +155,6 @@ public class ServerController {
                                  String addressInfo, String telNum, String userName, String cityInfo) throws Exception{
         int id = 0;
         try{
-            String[] cityInfos = cityInfo.split("-");
-            if (cityInfos == null || cityInfos.length != 3) {
-                new ResultMsg("saveAddressOk", "系统异常,请检查地址的省市信息~");
-            }
-
             if (StringUtils.isNotBlank(addressId)) {
                 id = stepService.updateAddress(addressId, userId, addressInfo, telNum, userName, cityInfo);
             } else {
