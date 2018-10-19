@@ -82,6 +82,7 @@ public class StepService {
         return user;
     }
 
+    @Transactional
     public User changeCoin(String step, String jiaChenStep, String rewardStep, String openId, String userId) throws Exception{
         User user = userMapper.getByOpenId(openId);
 
@@ -125,6 +126,15 @@ public class StepService {
 
             }
         }
+
+        // 奖励步数
+        List<Share> addRewardShares = shareMapper.selectByMuserAndIsAddReward(Integer.parseInt(userId));
+        // 删除首次奖励
+        for (Share addRewardShare : addRewardShares) {
+            addRewardShare.setIsaddreward("0");
+            shareMapper.updateByPrimaryKey(addRewardShare);
+        }
+
         return user;
     }
 
@@ -191,10 +201,10 @@ public class StepService {
         }
 
         // 删除首次奖励
-        for (Share addRewardShare : addRewardShares) {
-            addRewardShare.setIsaddreward("0");
-            shareMapper.updateByPrimaryKey(addRewardShare);
-        }
+//        for (Share addRewardShare : addRewardShares) {
+//            addRewardShare.setIsaddreward("0");
+//            shareMapper.updateByPrimaryKey(addRewardShare);
+//        }
     }
 
 
