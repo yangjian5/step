@@ -551,9 +551,18 @@ public class StepService {
     public List<String> getShareUsersByMuserId(Integer muserId) throws Exception{
         List<Share> shares = shareMapper.selectByMuser(muserId);
         List<String> userUrls = new ArrayList<String>();
+
         for (int i=0; i<4; i++) {
             if (shares.size()-1 < i) {
-                userUrls.add("/image/touxiang.png");
+                if (i==0) {
+                    userUrls.add("/image/mei.png");
+                } else if (i==1) {
+                    userUrls.add("/image/peng.png");
+                } else if (i==2) {
+                    userUrls.add("/image/you.png");
+                } else if (i==3) {
+                    userUrls.add("/image/tanhao.png");
+                }
             } else {
                 Share share = shares.get(i);
                 User user = userMapper.selectByPrimaryKey(share.getSuserid());
