@@ -401,6 +401,10 @@ public class StepService {
         newActivestep.setType(type);
         newActivestep.setCreatetime(DataTypeUtils.formatCurDateTime());
         String endTime = DataTypeUtils.formatTimeStamp_yyyy_mm_dd(DataTypeUtils.addOrMinusDay(DataTypeUtils.getCurrentDate(), 1));
+        if ("4".equals(type)) {
+            endTime = "2018-10-31";
+        }
+
         newActivestep.setEndtime(endTime+" 23:59:59");
         int activestepId = activestepMapper.insert(newActivestep);
 
