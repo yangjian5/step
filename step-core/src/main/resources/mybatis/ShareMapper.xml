@@ -51,6 +51,6 @@
   <select id="selectByMuser" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select id, muserId, suserId, isAddReward, createTime
     from share
-    where muserId = #{muserId,jdbcType=INTEGER}
+    where muserId = #{muserId,jdbcType=INTEGER} order by createTime desc
   </select>
 </mapper>
