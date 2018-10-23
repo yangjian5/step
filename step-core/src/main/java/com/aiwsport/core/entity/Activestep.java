@@ -15,6 +15,13 @@ public class Activestep {
 
     private String endtime;
 
+    private String showurl;
+
+    private String title;
+
+    private String showdesc;
+
+
     public Integer getId() {
         return id;
     }
@@ -61,5 +68,29 @@ public class Activestep {
 
     public void setEndtime(String endtime) {
         this.endtime = endtime;
+    }
+
+    public String getShowurl() {
+        return showurl;
+    }
+
+    public void setShowurl(String showurl) {
+        this.showurl = showurl;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getShowdesc() {
+        return showdesc;
+    }
+
+    public void setShowdesc(String showdesc) {
+        this.showdesc = showdesc;
     }
 }

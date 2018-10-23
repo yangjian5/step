@@ -59,6 +59,9 @@ public class StepService {
     @Autowired
     private ShareMapper shareMapper ;
 
+    @Autowired
+    private CommentMapper commentMapper ;
+
     private static Logger logger = LogManager.getLogger();
 
     public User login(JSONObject userInfo, String province,
@@ -589,5 +592,35 @@ public class StepService {
         }
         return userUrls;
     }
+
+    public Activestep getActivestepFor4(Integer userId) {
+        return activestepMapper.selectByUserIdAndType(userId, "4");
+    }
+
+    public int updateActivestep(Activestep activestep) {
+        return activestepMapper.updateByPrimaryKey(activestep);
+    }
+
+
+    public int createComment(Integer userId, Integer activeStepId, String content) throws Exception{
+        Comment comment = new Comment();
+        comment.setActivestepid(activeStepId);
+        comment.setContent(content);
+        comment.setUserid(userId);
+        comment.setCreatetime(DataTypeUtils.formatCurDateTime());
+        comment.setStatus("1");
+        return commentMapper.insert(comment);
+    }
+
+    public int delComment(Integer userId, Integer activeStepId){
+
+        return 0;
+    }
+
+    public List<Comment> getComment(Integer activeStepId){
+        List<Comment> comments = commentMapper.selectByActiveStepId(activeStepId);
+        return comments;
+    }
+
 
 }

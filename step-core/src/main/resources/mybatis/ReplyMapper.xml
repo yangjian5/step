@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aiwsport.core.mapper.ReplyMapper" >
+  <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Reply" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="INTEGER" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="commentId" property="commentid" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from reply
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.aiwsport.core.entity.Reply" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into reply (userId, content, createTime, 
+      commentId, status)
+    values (#{userid,jdbcType=INTEGER}, #{content,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{commentid,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Reply" >
+    update reply
+    set userId = #{userid,jdbcType=INTEGER},
+      content = #{content,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      commentId = #{commentid,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, userId, content, createTime, commentId, status
+    from reply
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, userId, content, createTime, commentId, status
+    from reply
+  </select>
+</mapper>

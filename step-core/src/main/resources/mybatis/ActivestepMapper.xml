@@ -8,6 +8,9 @@
     <result column="type" property="type" jdbcType="VARCHAR" />
     <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
     <result column="endTime" property="endtime" jdbcType="TIMESTAMP" />
+    <result column="showUrl" property="showurl" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="showDesc" property="showdesc" jdbcType="VARCHAR" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from activestep
@@ -18,10 +21,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into activestep (userId, status,
-      type, createTime, endTime
+      type, createTime, endTime, showUrl, title, showDesc
       )
     values (#{userid,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR},
-      #{type,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP}
+      #{type,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP},
+      #{showUrl,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{showdesc,jdbcType=VARCHAR}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Activestep" >
@@ -30,30 +34,33 @@
       status = #{status,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       createTime = #{createtime,jdbcType=TIMESTAMP},
-      endTime = #{endtime,jdbcType=TIMESTAMP}
+      endTime = #{endtime,jdbcType=TIMESTAMP},
+      showUrl = #{showurl,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      showDesc = #{showdesc,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, userId, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
   </select>
   <select id="selectByUserIdAndType" resultMap="BaseResultMap" >
-    select id, userId, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
     where userId = #{arg0} and type = #{arg1} and endTime > now()
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, userId, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
     where userId = #{userId,jdbcType=INTEGER} and endTime > now()
   </select>
   <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select id, userId, status, type, createTime, endTime
+    select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
     where type = #{type,jdbcType=VARCHAR} and endTime > now()
   </select>

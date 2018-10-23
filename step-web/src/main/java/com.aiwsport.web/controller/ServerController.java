@@ -67,7 +67,7 @@ public class ServerController {
             long end = System.currentTimeMillis();
             System.out.println("------cost------" + (end-start));
             jsonObject = JSONObject.parseObject(userInfo);
-            nickName = nickName.replaceAll("[^\\u0000-\\uFFFF]", "?");
+//            nickName = nickName.replaceAll("[^\\u0000-\\uFFFF]", "?");
             User user = stepService.login(jsonObject, province, avatarUrl, nickName, country, city, gender);
             jsonObject.put("coinnum", user.getCoinnum()+"");
             jsonObject.put("userid", user.getId()+"");
@@ -282,6 +282,26 @@ public class ServerController {
     public ResultMsg getShareUser(Integer mUserId) throws Exception{
         List<String> userUrls = stepService.getShareUsersByMuserId(mUserId);
         return new ResultMsg("getShareUserOk", userUrls);
+    }
+
+    @RequestMapping("/step/add_show_info.json")
+    public ResultMsg addShowInfo(Integer userId, String title, String showDesc) throws Exception{
+        Activestep activestep = stepService.getActivestepFor4(userId);
+        activestep.setTitle(title);
+        activestep.setShowdesc(showDesc);
+
+        int isScuess = stepService.updateActivestep(activestep);
+        if (isScuess == 0) {
+            return new ResultMsg(false, 403,"添加个人展示失败,请联系客服");
+        }
+
+        return new ResultMsg("addShowInfoOk", "添加个人展示成功");
+    }
+
+    @RequestMapping("/step/get_step_for_4.json")
+    public ResultMsg getStepFor4(Integer userId) throws Exception{
+        Activestep activestep = stepService.getActivestepFor4(userId);
+        return new ResultMsg("getStepFor4Ok", activestep);
     }
 
     @RequestMapping("/test.json")
