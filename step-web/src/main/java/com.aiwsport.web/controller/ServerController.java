@@ -192,10 +192,10 @@ public class ServerController {
         try{
             return stepService.createActive(userId, enterType);
         } catch (Exception e) {
-            logger.error("create_active is error", e);
+            logger.error("createActive is error", e);
         }
 
-        return new ResultMsg("createActive is error", "系统异常,请重试");
+        return new ResultMsg("createActiveError", "系统异常,请重试");
     }
 
     @RequestMapping("/step/zan_active.json")

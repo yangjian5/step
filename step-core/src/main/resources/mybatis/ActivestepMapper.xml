@@ -25,7 +25,7 @@
       )
     values (#{userid,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR},
       #{type,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{endtime,jdbcType=TIMESTAMP},
-      #{showUrl,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{showdesc,jdbcType=VARCHAR}
+      #{showurl,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{showdesc,jdbcType=VARCHAR}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Activestep" >
