@@ -22,7 +22,7 @@ public class CommentController {
     @Autowired
     private StepService stepService;
 
-    @RequestMapping("/get_comments.json")
+    @RequestMapping("/step/get_comments.json")
     public ResultMsg getComments(Integer activeStepId) {
         logger.info("getComments");
         List<Comment> comments = stepService.getComment(activeStepId);
@@ -52,7 +52,7 @@ public class CommentController {
         return new ResultMsg("getCommentsOk", queryCommentShows);
     }
 
-    @RequestMapping("/create_comment.json")
+    @RequestMapping("/step/create_comment.json")
     public ResultMsg createComment(Integer userId, Integer activeStepId, String content) {
         logger.info("createComment");
         int isSuccess = 0;

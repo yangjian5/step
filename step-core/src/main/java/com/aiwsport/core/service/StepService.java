@@ -442,7 +442,7 @@ public class StepService {
         }
 
         Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), type);
-        if (activestep == null || !type.equals(activestep.getType())) {
+        if (activestep == null) {
             return 0;
         }
 
