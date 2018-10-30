@@ -481,31 +481,35 @@ public class StepService {
         return new ResultMsg("+ 500步", 1);
     }
 
-    public List<QueryActivestepShow> getActiveTop(String userId) throws Exception{
+    public List<QueryActivestepShow> getActiveTop(String userId, String opType) throws Exception{
         List<Activedata> activedatas = new ArrayList<Activedata>();
-        if (StringUtils.isNotBlank(userId) && !"0".equals(userId)) {
-            Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), "4");
-            if (activestep != null) {
-                Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
-                if (activedata != null) {
-                    activedatas.add(activedata);
-                }
+        Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), "4");
+        if (activestep != null) {
+            Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
+            if (activedata != null) {
+                activedatas.add(activedata);
             }
-        } else {
-            activedatas = activedataMapper.selectTop("4");
         }
+
+        if (!"search".equals(opType)) {
+            List<Activedata> allActivedatas = activedataMapper.selectTop("4");
+            if (allActivedatas != null && allActivedatas.size() > 0) {
+                activedatas.addAll(allActivedatas);
+            }
+        }
+
 
         List<QueryActivestepShow> queryActivestepShows = new ArrayList<QueryActivestepShow>();
         for (Activedata activedata : activedatas) {
             QueryActivestepShow queryActivestepShow = new QueryActivestepShow();
-            Activestep activestep = activestepMapper.selectByPrimaryKey(activedata.getActivesstepid());
-            if (activestep == null) {
+            Activestep singleActivestep = activestepMapper.selectByPrimaryKey(activedata.getActivesstepid());
+            if (singleActivestep == null) {
                 continue;
             }
 
-            queryActivestepShow.setUserid(activestep.getUserid());
-            queryActivestepShow.setShowtitle(activestep.getTitle());
-            User user = userMapper.selectByPrimaryKey(activestep.getUserid());
+            queryActivestepShow.setUserid(singleActivestep.getUserid());
+            queryActivestepShow.setShowtitle(singleActivestep.getTitle());
+            User user = userMapper.selectByPrimaryKey(singleActivestep.getUserid());
             if (user == null) {
                 continue;
             }
@@ -513,7 +517,7 @@ public class StepService {
             queryActivestepShow.setNickname(user.getNickname());
             queryActivestepShow.setAvatarurl(user.getAvatarurl());
             queryActivestepShow.setSumstep(activedata.getSumstep());
-            List<Activext> activexts = activextMapper.selectByUserId(activestep.getUserid());
+            List<Activext> activexts = activextMapper.selectByUserId(singleActivestep.getUserid());
             if (activexts == null) {
                 continue;
             }
