@@ -481,8 +481,20 @@ public class StepService {
         return new ResultMsg("+ 500步", 1);
     }
 
-    public List<QueryActivestepShow> getActiveTop() throws Exception{
-        List<Activedata> activedatas = activedataMapper.selectTop("4");
+    public List<QueryActivestepShow> getActiveTop(String userId) throws Exception{
+        List<Activedata> activedatas = new ArrayList<Activedata>();
+        if (StringUtils.isNotBlank(userId) && !"0".equals(userId)) {
+            Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), "4");
+            if (activestep != null) {
+                Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
+                if (activedata != null) {
+                    activedatas.add(activedata);
+                }
+            }
+        } else {
+            activedatas = activedataMapper.selectTop("4");
+        }
+
         List<QueryActivestepShow> queryActivestepShows = new ArrayList<QueryActivestepShow>();
         for (Activedata activedata : activedatas) {
             QueryActivestepShow queryActivestepShow = new QueryActivestepShow();

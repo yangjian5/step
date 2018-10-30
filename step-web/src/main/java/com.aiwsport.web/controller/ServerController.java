@@ -204,8 +204,8 @@ public class ServerController {
     }
 
     @RequestMapping("/step/get_active_top.json")
-    public ResultMsg getActiveTop() throws Exception {
-        List<QueryActivestepShow> activesteps = stepService.getActiveTop();
+    public ResultMsg getActiveTop(String userId) throws Exception {
+        List<QueryActivestepShow> activesteps = stepService.getActiveTop(userId);
         return new ResultMsg("getActiveTopOk", activesteps);
     }
 
