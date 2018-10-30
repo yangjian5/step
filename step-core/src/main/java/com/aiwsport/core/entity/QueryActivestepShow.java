@@ -16,6 +16,8 @@ public class QueryActivestepShow {
 
     private String avatarurl;
 
+    private String showtitle;
+
     private List<User> zanUser;
 
     public Integer getId() {
@@ -64,5 +66,13 @@ public class QueryActivestepShow {
 
     public void setZanUser(List<User> zanUser) {
         this.zanUser = zanUser;
+    }
+
+    public String getShowtitle() {
+        return showtitle;
+    }
+
+    public void setShowtitle(String showtitle) {
+        this.showtitle = showtitle;
     }
 }

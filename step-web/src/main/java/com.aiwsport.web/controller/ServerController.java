@@ -287,8 +287,18 @@ public class ServerController {
     @RequestMapping("/step/add_show_info.json")
     public ResultMsg addShowInfo(Integer userId, String title, String showDesc) throws Exception{
         Activestep activestep = stepService.getActivestepFor4(userId);
-        activestep.setTitle(title);
-        activestep.setShowdesc(showDesc);
+
+        if (StringUtils.isNotBlank(title)) {
+            activestep.setTitle(title);
+        } else {
+            activestep.setTitle("系统补充:主人还未添加标题~");
+        }
+
+        if (StringUtils.isNotBlank(showDesc)) {
+            activestep.setShowdesc(showDesc);
+        } else {
+            activestep.setShowdesc("系统补充:主人还没有填写自我展示~");
+        }
 
         int isScuess = stepService.updateActivestep(activestep);
         if (isScuess == 0) {

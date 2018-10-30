@@ -416,6 +416,8 @@ public class StepService {
         String endTime = DataTypeUtils.formatTimeStamp_yyyy_mm_dd(DataTypeUtils.addOrMinusDay(DataTypeUtils.getCurrentDate(), 1));
         if ("4".equals(type)) {
             endTime = "2018-10-31";
+            newActivestep.setShowdesc("系统补充:主人还没有填写自我展示~");
+            newActivestep.setTitle("系统补充:主人还未添加标题~");
         }
 
         newActivestep.setEndtime(endTime+" 23:59:59");
@@ -490,6 +492,7 @@ public class StepService {
             }
 
             queryActivestepShow.setUserid(activestep.getUserid());
+            queryActivestepShow.setShowtitle(activestep.getTitle());
             User user = userMapper.selectByPrimaryKey(activestep.getUserid());
             if (user == null) {
                 continue;
