@@ -57,5 +57,15 @@
     from activedata
     where sumStep > #{sumStep,jdbcType=INTEGER} and status='1'
   </select>
+  <select id="selectFinishCount" resultType="java.lang.Integer">
+    select count(1)
+    from activedata
+    where type = #{arg0,jdbcType=VARCHAR} and status='1' and dayStep > #{arg1,jdbcType=INTEGER}
+  </select>
+  <select id="selectFinish5Count" resultType="java.lang.Integer">
+    select count(1)
+    from activedata
+    where type = #{type,jdbcType=VARCHAR} and status='1' and isSign = '1'
+  </select>
 
 </mapper>

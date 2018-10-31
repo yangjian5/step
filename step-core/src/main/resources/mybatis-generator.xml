@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.aiwsport.core" targetProject="src/main/java" type="XMLMAPPER">
         </javaClientGenerator>
 
-        <table tableName="%">
+        <table tableName="activelog">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

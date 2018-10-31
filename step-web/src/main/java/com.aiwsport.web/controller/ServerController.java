@@ -216,11 +216,10 @@ public class ServerController {
 
     @RequestMapping("/step/get_active_info.json")
     public ResultMsg getActiveInfo(String enterType) throws Exception {
-        List<Activestep> activesteps = stepService.getActiveInfo(enterType);
-        int activeCount = activesteps.size();
+        int activeCount = stepService.getActiveInfoCount(enterType);
 
         JSONObject jsonObject = new JSONObject();
-        if (activesteps == null || activeCount < 1) {
+        if (activeCount < 1) {
             jsonObject.put("joinUserCount", 100);
             jsonObject.put("reward", 0);
         } else {

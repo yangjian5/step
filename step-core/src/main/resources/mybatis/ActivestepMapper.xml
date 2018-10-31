@@ -64,5 +64,10 @@
     from activestep
     where type = #{type,jdbcType=VARCHAR} and endTime > now() and status='1'
   </select>
+  <select id="selectByTypeCount" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select count(1)
+    from activestep
+    where type = #{type,jdbcType=VARCHAR} and endTime > now() and status='1'
+  </select>
 
 </mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aiwsport.core.mapper.ActivelogMapper" >
+  <resultMap id="BaseResultMap" type="com.aiwsport.core.entity.Activelog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="activestepId" property="activestepid" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="coin" property="coin" jdbcType="DOUBLE" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="isFinish" property="isfinish" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from activelog
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.aiwsport.core.entity.Activelog" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into activelog (userId, activestepId, type, 
+      coin, createTime, isFinish
+      )
+    values (#{userid,jdbcType=INTEGER}, #{activestepid,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
+      #{coin,jdbcType=DOUBLE}, #{createtime,jdbcType=TIMESTAMP}, #{isfinish,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aiwsport.core.entity.Activelog" >
+    update activelog
+    set userId = #{userid,jdbcType=INTEGER},
+      activestepId = #{activestepid,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      coin = #{coin,jdbcType=DOUBLE},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      isFinish = #{isfinish,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, userId, activestepId, type, coin, createTime, isFinish
+    from activelog
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, userId, activestepId, type, coin, createTime, isFinish
+    from activelog
+  </select>
+</mapper>

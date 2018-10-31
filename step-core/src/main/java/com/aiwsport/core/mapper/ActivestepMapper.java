@@ -21,4 +21,6 @@ public interface ActivestepMapper {
     List<Activestep> selectByUserId(Integer UserId);
 
     List<Activestep> selectByType(String type);
+
+    int selectByTypeCount(String type);
 }

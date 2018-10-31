@@ -62,6 +62,9 @@ public class StepService {
     @Autowired
     private CommentMapper commentMapper ;
 
+    @Autowired
+    private ActivelogMapper activelogMapper ;
+
     private static Logger logger = LogManager.getLogger();
 
     public User login(JSONObject userInfo, String province,
@@ -561,6 +564,22 @@ public class StepService {
         return activesteps;
     }
 
+    public int getActiveInfoCount(String type) throws Exception{
+        return activestepMapper.selectByTypeCount(type);
+    }
+
+    public Activedata selectByActiveStepId(Integer activeStepId){
+        return activedataMapper.selectByActiveStepId(activeStepId);
+    }
+
+    public int selectFinish(String type, Integer dayStep){
+        return activedataMapper.selectFinishCount(type, dayStep);
+    }
+
+    public int selectFinish5Count(String type){
+        return activedataMapper.selectFinish5Count(type);
+    }
+
     public int doSign(Integer userId) throws Exception{
         boolean flag = DataTypeUtils.hourMinuteBetween(DataTypeUtils.formatCurDateTime(), DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 04:00:00", DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 06:00:00");
         if (!flag) {
@@ -653,6 +672,18 @@ public class StepService {
     public List<Comment> getComment(Integer activeStepId){
         List<Comment> comments = commentMapper.selectByActiveStepId(activeStepId);
         return comments;
+    }
+
+    public int updateActiveData(Activedata activedata){
+        return activedataMapper.updateByPrimaryKey(activedata);
+    }
+
+    public int updateUser(User user){
+        return userMapper.updateByPrimaryKey(user);
+    }
+
+    public int createActiveLog(Activelog activelog){
+        return activelogMapper.insert(activelog);
     }
 
 

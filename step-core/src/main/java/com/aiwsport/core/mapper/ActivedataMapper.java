@@ -20,5 +20,9 @@ public interface ActivedataMapper {
 
     List<Activedata> selectTop(String type);
 
+    int selectFinishCount(String type, Integer dayStep);
+
+    int selectFinish5Count(String type);
+
     int selectCount(Integer sumStep);
 }
