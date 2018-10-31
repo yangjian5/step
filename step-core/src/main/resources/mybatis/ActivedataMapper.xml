@@ -52,4 +52,10 @@
     from activedata
     where type = #{type,jdbcType=VARCHAR} and status='1' order by sumStep desc limit 100
   </select>
+  <select id="selectCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select count(1)
+    from activedata
+    where sumStep > #{sumStep,jdbcType=INTEGER} and status='1'
+  </select>
+
 </mapper>

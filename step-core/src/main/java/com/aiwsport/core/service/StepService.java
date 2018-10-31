@@ -151,6 +151,11 @@ public class StepService {
         Map<String, String> dayStepMap = new HashMap<String, String>();
         dayStepMap.put("daySumStep", toDayStep+"");
 
+
+        if (toDayStep > 30000) {
+            toDayStep = 30000;
+        }
+
         List<StepChangeLog> stepChangeLogs = null;
         try {
             stepChangeLogs = stepChangeLogMapper.selectAByUserIdToday(userId, DataTypeUtils.formatCurDateTime_yyyy_mm_dd()+" 00:00:00", DataTypeUtils.formatCurDateTime());
@@ -174,6 +179,9 @@ public class StepService {
             toDayStep = toDayStep - stepChangeLog.getStepnum();
         }
 
+        if (toDayStep < 0) {
+            toDayStep = 0;
+        }
         dayStepMap.put("toDayStep", toDayStep+"");
         buildStep(userId, dayStepMap, toDayStep);
         return dayStepMap;
@@ -484,9 +492,11 @@ public class StepService {
     public List<QueryActivestepShow> getActiveTop(String userId, String opType) throws Exception{
         List<Activedata> activedatas = new ArrayList<Activedata>();
         Activestep activestep = activestepMapper.selectByUserIdAndType(Integer.parseInt(userId), "4");
+        int index = -1;
         if (activestep != null) {
             Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
             if (activedata != null) {
+                index = activedataMapper.selectCount(activedata.getSumstep());
                 activedatas.add(activedata);
             }
         }
@@ -494,7 +504,7 @@ public class StepService {
         if (!"search".equals(opType)) {
             List<Activedata> allActivedatas = activedataMapper.selectTop("4");
             if (allActivedatas != null && allActivedatas.size() > 0) {
-                activedatas.addAll(allActivedatas);
+                activedatas = allActivedatas;
             }
         }
 
@@ -505,6 +515,10 @@ public class StepService {
             Activestep singleActivestep = activestepMapper.selectByPrimaryKey(activedata.getActivesstepid());
             if (singleActivestep == null) {
                 continue;
+            }
+
+            if (index != -1) {
+                queryActivestepShow.setIndex(index);
             }
 
             queryActivestepShow.setUserid(singleActivestep.getUserid());

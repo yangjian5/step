@@ -52,17 +52,17 @@
   <select id="selectByUserIdAndType" resultMap="BaseResultMap" >
     select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
-    where userId = #{arg0} and type = #{arg1} and endTime > now()
+    where userId = #{arg0} and type = #{arg1} and endTime > now() and status='1'
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
-    where userId = #{userId,jdbcType=INTEGER} and endTime > now()
+    where userId = #{userId,jdbcType=INTEGER} and endTime > now() and status='1'
   </select>
   <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select id, userId, status, type, createTime, endTime, showUrl, title, showDesc
     from activestep
-    where type = #{type,jdbcType=VARCHAR} and endTime > now()
+    where type = #{type,jdbcType=VARCHAR} and endTime > now() and status='1'
   </select>
 
 </mapper>

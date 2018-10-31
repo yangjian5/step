@@ -20,6 +20,8 @@ public class QueryActivestepShow {
 
     private List<User> zanUser;
 
+    private Integer index;
+
     public Integer getId() {
         return id;
     }
@@ -74,5 +76,13 @@ public class QueryActivestepShow {
 
     public void setShowtitle(String showtitle) {
         this.showtitle = showtitle;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 }

@@ -19,4 +19,6 @@ public interface ActivedataMapper {
     Activedata selectByActiveStepId(Integer activeStepId);
 
     List<Activedata> selectTop(String type);
+
+    int selectCount(Integer sumStep);
 }
