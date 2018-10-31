@@ -32,8 +32,8 @@ public class CheckActive {
     @Scheduled(cron = "0 0 23 * * ?") // 每天23点执行
 //    @Scheduled(cron = "0 0/1 * * * ?") // 每1分钟执行一次
     public void checkUserActive(){
-        // type 1 达标的人数 参数的人数
         try {
+            // type 1 达标的人数 参数的人数
             buildActive("1", 10000, 30);
         } catch (Exception e) {
             logger.error("checkUserActive is error type is 1", e);
@@ -62,6 +62,8 @@ public class CheckActive {
     }
 
     private void buildActive(String type, int stepLimit, int joinCoin) throws Exception{
+        logger.info("buildActive is start type is " + type);
+
         // 计算总人数*报名费/达标人数 = 每人分得的奖励
         List<Activestep> activesteps = stepService.getActiveInfo(type);
 
@@ -71,6 +73,8 @@ public class CheckActive {
         } else {
             finishCount = stepService.selectFinish(type, stepLimit);
         }
+
+        logger.info("buildActive finishCount is " + finishCount);
 
         if (finishCount == 0) {
             return;
@@ -129,7 +133,7 @@ public class CheckActive {
             } catch (Exception e) {
                 logger.error("buildActive is error activestep is " + activestep.getId(), e);
             }
-
+            logger.info("buildActive is end type is " + type);
         }
     }
 
