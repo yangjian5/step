@@ -67,6 +67,10 @@ public class CommentController {
             return new ResultMsg(false, 403, "评论失败");
         }
 
+        if (isSuccess == 2) {
+            return new ResultMsg(false, 403, "请参加全区挑战赛,方可留言");
+        }
+
         return new ResultMsg("createCommentOk", "评论成功");
     }
 

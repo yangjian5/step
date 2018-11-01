@@ -655,6 +655,11 @@ public class StepService {
 
 
     public int createComment(Integer userId, Integer activeStepId, String content) throws Exception{
+        Activestep activestep = activestepMapper.selectByUserIdAndType(userId, "4");
+        if (activestep == null) {
+            return 2;
+        }
+
         Comment comment = new Comment();
         comment.setActivestepid(activeStepId);
         comment.setContent(content);
