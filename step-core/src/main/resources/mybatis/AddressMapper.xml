@@ -28,7 +28,7 @@
       userName = #{username,jdbcType=VARCHAR},
       telNum = #{telnum,jdbcType=VARCHAR},
       telNum = #{telnum,jdbcType=VARCHAR},
-      cityinfo = #{cityinfo,jdbcType=VARCHAR}
+      cityinfo = #{cityinfo,jdbcType=VARCHAR},
       addressinfo = #{addressinfo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
