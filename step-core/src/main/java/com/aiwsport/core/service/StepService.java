@@ -426,7 +426,7 @@ public class StepService {
         newActivestep.setCreatetime(DataTypeUtils.formatCurDateTime());
         String endTime = DataTypeUtils.formatTimeStamp_yyyy_mm_dd(DataTypeUtils.addOrMinusDay(DataTypeUtils.getCurrentDate(), 1));
         if ("4".equals(type)) {
-            endTime = "2018-10-31";
+            endTime = "2018-11-31";
             newActivestep.setShowdesc("系统补充:主人还没有填写自我展示~");
             newActivestep.setTitle("系统补充:主人还未添加标题~");
         }

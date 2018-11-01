@@ -50,7 +50,7 @@
   <select id="selectTop" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select id, activesStepId, isSign, sumStep, dayStep, type, status
     from activedata
-    where type = #{type,jdbcType=VARCHAR} and status='1' order by sumStep desc limit 100
+    where type = #{type,jdbcType=VARCHAR} and status='1' and endTime > now() order by sumStep desc limit 100
   </select>
   <select id="selectCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select count(1)
