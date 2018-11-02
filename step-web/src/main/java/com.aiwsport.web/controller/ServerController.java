@@ -198,12 +198,14 @@ public class ServerController {
         return new ResultMsg("createActiveError", "系统异常,请重试");
     }
 
-    @RequestMapping("/step/zan_active.json")
+    @RequestMapping(value="/step/zan_active.json", produces="text/plain;charset=UTF-8")
+    @ResponseBody
     public ResultMsg zanActive(Integer userId, Integer zanUserId) throws Exception {
         return stepService.zanActive(userId, zanUserId);
     }
 
-    @RequestMapping("/step/get_active_top.json")
+    @RequestMapping(value="/step/get_active_top.json", produces="text/plain;charset=UTF-8")
+    @ResponseBody
     public ResultMsg getActiveTop(String userId, String opType) throws Exception {
         List<QueryActivestepShow> activesteps = stepService.getActiveTop(userId, opType);
         return new ResultMsg("getActiveTopOk", activesteps);
