@@ -40,7 +40,7 @@
     select id, userId, zanUserId, createTime
     from activext
     where userId = #{arg0,jdbcType=INTEGER} and zanUserId = #{arg1,jdbcType=INTEGER}
-    and createTime BETWEEN date(now()) AND DATE_ADD(date(now()),INTERVAL 1 DAY)
+    and createTime BETWEEN (select date_format(now(),'%Y-%m-%d 00:00:00')) and (select date_format(now(),'%Y-%m-%d 23:59:59'))
   </select>
   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select id, userId, zanUserId, createTime
