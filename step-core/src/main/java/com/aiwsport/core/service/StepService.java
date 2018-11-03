@@ -534,12 +534,13 @@ public class StepService {
             queryActivestepShow.setNickname(user.getNickname());
             queryActivestepShow.setAvatarurl(user.getAvatarurl());
             queryActivestepShow.setSumstep(activedata.getSumstep());
+            List<User> zanUserList = new ArrayList<User>();
             List<Activext> activexts = activextMapper.selectByUserId(singleActivestep.getUserid());
             if (activexts == null) {
+                queryActivestepShow.setZanUser(zanUserList);
                 continue;
             }
 
-            List<User> zanUserList = new ArrayList<User>();
             for (Activext activext : activexts) {
                 User zanUser = userMapper.selectByPrimaryKey(activext.getZanuserid());
                 zanUserList.add(zanUser);
