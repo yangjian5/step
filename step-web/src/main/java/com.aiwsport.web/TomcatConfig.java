@@ -74,6 +74,7 @@ public class TomcatConfig {
             connector.setAttribute("protocol", protocol);
             connector.setAttribute("redirectPort", "redirectPort");
             connector.setAttribute("compression", "compression");
+            connector.setAttribute("URIEncoding", "utf-8");
         }
     }
 }
