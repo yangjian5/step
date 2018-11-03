@@ -489,7 +489,7 @@ public class StepService {
         Activedata activedata = activedataMapper.selectByActiveStepId(activestep.getId());
         activedata.setSumstep(activedata.getSumstep()+500);
         activedataMapper.updateByPrimaryKey(activedata);
-        return new ResultMsg("+ 500步", 1);
+        return new ResultMsg("为选手助力500步", 1);
     }
 
     public List<QueryActivestepShow> getActiveTop(String userId, String opType) throws Exception{
