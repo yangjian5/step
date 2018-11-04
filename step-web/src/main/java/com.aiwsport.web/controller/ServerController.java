@@ -175,10 +175,10 @@ public class ServerController {
 
 
     @RequestMapping("/step/is_join_active.json")
-    public ResultMsg isJoinActive(String userId, String enterType) throws Exception {
+    public ResultMsg isJoinActive(String userId, String enterType, String channel) throws Exception {
         int flag = 0;
         try{
-            flag = stepService.isJoinActive(userId, enterType);
+            flag = stepService.isJoinActive(userId, enterType, channel);
         } catch (Exception e) {
             logger.error("create_active is error", e);
         }

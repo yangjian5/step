@@ -447,10 +447,10 @@ public class StepService {
         return new ResultMsg("createActiveOk", "报名成功");
     }
 
-    public int isJoinActive(String userId, String type) throws Exception{
+    public int isJoinActive(String userId, String type, String channel) throws Exception{
         String nowTimeyyyy_mm_dd = DataTypeUtils.formatCurDateTime_yyyy_mm_dd();
         boolean flag = DataTypeUtils.hourMinuteBetween(DataTypeUtils.formatCurDateTime(), nowTimeyyyy_mm_dd+" 22:00:00", nowTimeyyyy_mm_dd+" 23:59:59");
-        if (flag) {// 时间段内不能报名
+        if (flag && !"user".equals(channel)) {// 时间段内不能报名
             return 4;
         }
 

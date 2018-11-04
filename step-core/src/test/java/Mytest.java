@@ -7,6 +7,9 @@ public class Mytest {
 
     public static void main(String[] args){
         BigDecimal a = BigDecimal.valueOf(2).multiply(BigDecimal.valueOf(20.3));
-        System.out.println(a.intValue());
+        System.out.println("user".equals(null));
+
+
+
     }
 }
