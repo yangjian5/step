@@ -335,6 +335,16 @@ public class StepService {
                 return new ResultMsg(false, 403,"请先添加地址 我的->地址管理");
             }
 
+            // 新人只能兑换一次
+            if ("1".equals(goods.getType())) {
+                int count = goodChangeLogMapper.selectByUserIdAndGoodId(Integer.parseInt(userId), goods.getId());
+                if (count > 0) {
+                    return new ResultMsg(false, 403,"您已经兑换过新人单品");
+                }
+            }
+
+
+
             // 扣减库存
             goods.setCount(goods.getCount()-1);
             goodsMapper.updateByPrimaryKey(goods);

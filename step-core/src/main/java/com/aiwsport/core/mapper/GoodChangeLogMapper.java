@@ -17,4 +17,6 @@ public interface GoodChangeLogMapper {
     List<GoodChangeLog> selectAll();
 
     int updateByPrimaryKey(GoodChangeLog record);
+
+    int selectByUserIdAndGoodId(Integer UserId, Integer goodId);
 }

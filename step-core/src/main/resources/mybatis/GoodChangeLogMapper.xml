@@ -48,4 +48,8 @@
     select id, userId, goodId, createTime, status, kdnum
     from good_change_log where userId = #{userId,jdbcType=INTEGER} order by createTime desc
   </select>
+  <select id="selectByUserIdAndGoodId" resultType="java.lang.Integer" >
+    select count(1)
+    from good_change_log where userId = #{arg0,jdbcType=INTEGER} and goodId = #{arg1,jdbcType=INTEGER}
+  </select>
 </mapper>
