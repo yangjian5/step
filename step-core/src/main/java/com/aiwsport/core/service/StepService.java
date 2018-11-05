@@ -437,8 +437,8 @@ public class StepService {
         String endTime = DataTypeUtils.formatTimeStamp_yyyy_mm_dd(DataTypeUtils.addOrMinusDay(DataTypeUtils.getCurrentDate(), 1));
         if ("4".equals(type)) {
             endTime = "2018-12-31";
-            newActivestep.setShowdesc("系统补充:主人还没有填写自我展示~");
-            newActivestep.setTitle("系统补充:主人还未添加标题~");
+            newActivestep.setShowdesc("系统补充:主人还没有填写自我展示,快评论催促选手填写为自己拉票");
+            newActivestep.setTitle("选手未添加标题,快去评论催促选手填写为自己拉票");
         }
 
         newActivestep.setEndtime(endTime+" 23:59:59");
