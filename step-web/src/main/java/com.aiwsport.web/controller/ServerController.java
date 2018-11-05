@@ -283,7 +283,7 @@ public class ServerController {
         return new ResultMsg("getShareUserOk", userUrls);
     }
 
-    @RequestMapping("/step/add_show_info.json")
+    @RequestMapping("/add_show_info.json")
     public ResultMsg addShowInfo(Integer userId, String title, String showDesc) throws Exception{
         Activestep activestep = stepService.getActivestepFor4(userId);
 
