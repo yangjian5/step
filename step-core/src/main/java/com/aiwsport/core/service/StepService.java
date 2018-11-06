@@ -84,6 +84,14 @@ public class StepService {
             userNew.setProvince(province);
             userMapper.insert(userNew);
             return userNew;
+        } else {
+            if (!avatarUrl.equals(user.getAvatarurl())) {
+                user.setAvatarurl(avatarUrl);
+            }
+            if (!nickName.equals(user.getNickname())) {
+                user.setNickname(nickName);
+            }
+            userMapper.updateByPrimaryKey(user);
         }
         return user;
     }
