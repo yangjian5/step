@@ -76,7 +76,7 @@ public class StepService {
             // 创建用户
             User userNew = new User();
             userNew.setOpenid(openId);
-            userNew.setCoinnum(5);
+            userNew.setCoinnum(9);
             userNew.setAvatarurl(avatarUrl);
             userNew.setCity(city);
             userNew.setGender(gender);
