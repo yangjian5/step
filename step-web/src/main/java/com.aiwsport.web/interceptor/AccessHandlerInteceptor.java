@@ -25,7 +25,7 @@ public class AccessHandlerInteceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        authSign(request, "y21gsdi35zas0921ksjxu3la5noiwns5ak821#2*ds+");
+        authSign(request, "y21gsdi35zas0921ksjxu3la5noiwns5ak821#2*ds+");
         return true;
     }
 
@@ -53,14 +53,14 @@ public class AccessHandlerInteceptor implements HandlerInterceptor {
     protected void authSign(HttpServletRequest request, String secret) {
         String paramString = getQueryString(request);
         String param_sign = request.getParameter("sign");
-        commonAuthSign(paramString,param_sign,secret);
+        commonAuthSign(paramString,param_sign,secret,request.getRequestURI());
     }
 
-    protected void commonAuthSign(String paramString,String param_sign,String secret){
+    protected void commonAuthSign(String paramString,String param_sign,String secret, String uri){
         String sign = DigestUtils.md5Hex(URLEncoder.encode(paramString.replaceAll(" ", "")) + secret);
         if (!sign.equals(param_sign)) {
-            logger.warn("paramString:" + paramString +
-                    ",param sign:" + param_sign + ",sign:" + sign);
+            logger.warn("paramString: " + paramString +
+                    ",param sign: " + param_sign + ",sign: " + sign + ", uri: " + uri);
             throw new StepServerException(StepServerExceptionFactor.SIGN_IS_ERROR);
         }
     }
